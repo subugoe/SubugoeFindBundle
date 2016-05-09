@@ -1,0 +1,17 @@
+{
+    "name": "subugoe/find-bundle",
+    "description": "Solr Index bundle",
+    "require": {
+        "nelmio/solarium-bundle": "^2.2"
+    },
+    "license": "GPL-v2.0",
+    "authors": [
+        {
+            "name": "Ingo Pfennigstorf",
+            "email": "i.pfennigstorf@gmail.com"
+        }
+    ],
+    "autoload": {
+       "psr-4": { "Subugoe\\FindBundle\\": "" }
+    }
+}
