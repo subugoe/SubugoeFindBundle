@@ -1,3 +1,7 @@
 subugoe_find_homepage:
     path:     /
     defaults: { _controller: SubugoeFindBundle:Default:index }
+
+subugoe_find_detail:
+    path: /id/{id}
+    defaults: { _controller: SubugoeFindBundle:Default:detail }
