@@ -2,7 +2,8 @@
     "name": "subugoe/find-bundle",
     "description": "Solr Index bundle",
     "require": {
-        "nelmio/solarium-bundle": "^2.2"
+        "nelmio/solarium-bundle": "^2.2",
+        "symfony/form": "^3.0"
     },
     "license": "GPL-v2.0",
     "authors": [
