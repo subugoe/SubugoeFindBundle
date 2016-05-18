@@ -1,12 +1,42 @@
-<ul>
-{% for result in results %}
-   <li>
-      <article class="result">
-         {% if result.fields.thumbs_url is defined %}
-            <img src="{{ result.fields.thumbs_url.0 }}" alt="">
-         {% endif %}
-         <a href="{{ path('subugoe_find_detail', {'id': result.fields.id}) }}">{{ result.fields.bytitle }}</a>
-      </article>
-   </li>
-{% endfor %}
-</ul>
+{% extends 'base.html.twig' %}
+
+{% block title %}Göttinger Digitalisierungszentrum{% endblock %}
+
+{% block body %}
+    <ol class="resultList">
+        {% for result in results %}
+            <li>
+                <article>
+                    <h1><a href="{{ path('subugoe_find_detail', {'id': result.fields.id}) }}">{{ result.fields.bytitle }}</a></h1>
+
+                    {% if result.fields.thumbs_url is defined %}
+                        <img src="{{ result.fields.thumbs_url.0 }}" alt="">
+                    {% endif %}
+                </article>
+            </li>
+        {% endfor %}
+    </ol>
+{% endblock %}
+
+{% block sidebar %}
+    {% for key, facet in facets %}
+        <article class="facet">
+            <h1>{{ key | trans }}</h1>
+
+            <ol class="facetList">
+                {% for value, count in facet if count > 0 %}
+                    {% set facet_name = ['facet', key]|join('-') %}
+                    <li>
+                        <a href="{{ path('subugoe_find_homepage', {
+                            'filter': queryParams|merge({
+                                (facetCounter):  {
+                                    (key) : (value)
+                                }
+                            }
+                            )})}}">{{ value | trans }} <span class="facetCount">{{ count }}</span></a>
+                    </li>
+                {% endfor %}
+            </ol>
+        </article>
+    {% endfor %}
+{% endblock %}

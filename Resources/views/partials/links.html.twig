@@ -1,0 +1,8 @@
+{% if document.ismets %}
+        Links:
+        <a href="{{ path('_mets', {id: document.pid}) }}">mets</a>
+    |
+        <a href="http://dfg-viewer.de/show?set[mets]={{ url('_mets', {id: document.pid}) }}">DFG Viewer</a>
+    |
+        <a href="http://opac.sub.uni-goettingen.de/DB=1/PPN?PPN={{ document.pid | replace({'PPN': ''}) }}">SUB-Opac</a>
+{% endif %}

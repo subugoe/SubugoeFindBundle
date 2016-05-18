@@ -1,1 +1,26 @@
-<h1>{{ document.0.fields.bytitle }}</h1>
+{% extends 'base.html.twig' %}
+
+{% block title %}Detail{% endblock %}
+
+{% block body %}
+
+    <h1>{{ document.bytitle }}</h1>
+
+    <dl>
+        {% for key, value in document %}
+            <dt>{{ key }}</dt>
+            <dd>
+                {% if value is iterable %}
+                    <ul>
+                        {% for entry in value %}
+                            <li>{{ entry }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    {{ value }}
+                {% endif %}
+            </dd>
+        {% endfor %}
+    </dl>
+
+{% endblock %}
