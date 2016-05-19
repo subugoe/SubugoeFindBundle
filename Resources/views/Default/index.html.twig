@@ -3,15 +3,15 @@
 {% block title %}Göttinger Digitalisierungszentrum{% endblock %}
 
 {% block findnavigation %}
-    <div class="resultCount">{{ results.numFound }} {% trans %}numfound{% endtrans %}</div>
-
+    <div class="resultCount">{{ pagination.getTotalItemCount }} {% trans %}numfound{% endtrans %}</div>
+    <ol class="pagination"> {{ knp_pagination_render(pagination) }}</ol>
 
 {% endblock %}
 
 {% block body %}
 
     <ol class="resultList">
-        {% for result in results %}
+        {% for result in pagination %}
             <li>
                 <article>
                     <h1><a href="{{ path('subugoe_find_detail', {'id': result.fields.id}) }}">{{ result.fields.bytitle }}</a></h1>

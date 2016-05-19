@@ -19,12 +19,14 @@ class DefaultController extends Controller
         $client = $this->get('solarium.client');
         $select = $client->createSelect();
 
-        if (empty($query)) {
-            $select->setQuery('iswork:true');
-        } else {
-            $select->setQuery($query);
+        $queryComposer = [];
+        $queryComposer[] = 'iswork:true';
+
+        if (!empty($query)) {
+            $queryComposer[] = $query;
         }
 
+        $select->setQuery(join(' AND ', $queryComposer));
 
         $facetSet = $select->getFacetSet();
         foreach ($facetConfiguration as $facet) {
@@ -54,12 +56,21 @@ class DefaultController extends Controller
 
         $results = $client->select($select);
 
+        $paginator  = $this->get('knp_paginator');
+        $pagination = $paginator->paginate(
+            [
+                $client,
+                $select
+            ],
+            (int) $request->get('page') ?: 1
+        );
+
         return $this->render('SubugoeFindBundle:Default:index.html.twig', [
-            'results' => $results,
             'facets' => $results->getFacetSet()->getFacets(),
             'facetCounter' => $facetCounter,
             'queryParams' => $request->get('filter') ?: [],
             'query' => $query,
+            'pagination' => $pagination,
         ]);
     }
 
