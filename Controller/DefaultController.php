@@ -57,14 +57,19 @@ class DefaultController extends Controller
         $results = $client->select($select);
 
         $paginator  = $this->get('knp_paginator');
+        $rows = (int) $this->getParameter('results_per_page');
+        $currentPage = (int)$request->get('page') ?: 1;
+
         $pagination = $paginator->paginate(
             [
                 $client,
                 $select
             ],
-            ((int) $request->get('page') ?: 1),
-            (int) $this->getParameter('results_per_page')
+            $currentPage,
+            $rows
         );
+
+        $offset = ($currentPage - 1) * $rows;
 
         return $this->render('SubugoeFindBundle:Default:index.html.twig', [
             'facets' => $results->getFacetSet()->getFacets(),
@@ -72,6 +77,7 @@ class DefaultController extends Controller
             'queryParams' => $request->get('filter') ?: [],
             'query' => $query,
             'pagination' => $pagination,
+            'offset' => $offset,
         ]);
     }
 
