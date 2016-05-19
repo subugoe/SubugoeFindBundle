@@ -23,6 +23,7 @@ class SubugoeFindExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         $container->setParameter('facets', $config['facets']);
+        $container->setParameter('results_per_page', $config['results_per_page']);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');

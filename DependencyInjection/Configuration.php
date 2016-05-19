@@ -21,13 +21,16 @@ class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->root('subugoe_find');
         $rootNode
             ->children()
-            ->arrayNode('facets')
-                ->prototype('array')
-                    ->children()
-                        ->scalarNode('field')->end()
-                        ->scalarNode('title')->end()
+                ->arrayNode('facets')
+                    ->prototype('array')
+                        ->children()
+                            ->scalarNode('field')->end()
+                            ->scalarNode('title')->end()
+                        ->end()
                     ->end()
                 ->end()
+            ->integerNode('results_per_page')
+                ->defaultValue(15)
             ->end();
 
         return $treeBuilder;
