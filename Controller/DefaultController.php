@@ -64,7 +64,6 @@ class DefaultController extends Controller
             ],
             ((int) $request->get('page') ?: 1),
             (int) $this->getParameter('results_per_page')
-
         );
 
         return $this->render('SubugoeFindBundle:Default:index.html.twig', [

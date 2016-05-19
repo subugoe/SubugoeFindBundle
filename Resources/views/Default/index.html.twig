@@ -4,8 +4,7 @@
 
 {% block findnavigation %}
     <div class="resultCount">{{ pagination.getTotalItemCount }} {% trans %}numfound{% endtrans %}</div>
-    <ol class="pagination"> {{ knp_pagination_render(pagination) }}</ol>
-
+   {{ knp_pagination_render(pagination) }}
 {% endblock %}
 
 {% block body %}
