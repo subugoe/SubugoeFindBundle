@@ -2,7 +2,14 @@
 
 {% block title %}Göttinger Digitalisierungszentrum{% endblock %}
 
+{% block findnavigation %}
+    <div class="resultCount">{{ results.numFound }} {% trans %}numfound{% endtrans %}</div>
+
+
+{% endblock %}
+
 {% block body %}
+
     <ol class="resultList">
         {% for result in results %}
             <li>

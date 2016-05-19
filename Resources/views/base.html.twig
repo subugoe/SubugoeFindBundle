@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+{% include "partials/site/head.html.twig" %}
+<body>
+    <div class="wrap">
+        {% include 'partials/site/header.html.twig' %}
+
+        <div class="content">
+            <div class="tx_find">
+                <div class="results">
+                    <section class="facets">
+                        {% block sidebar %}{% endblock %}
+                    </section>
+                    {% block body %}{% endblock %}
+                </div>
+            </div>
+        </div>
+
+        {% include 'partials/site/footer.html.twig' %}
+
+        {% include 'partials/site/colophon.html.twig' %}
+
+    </div>
+</body>
+</html>
