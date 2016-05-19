@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Göttinger Digitalisierungszentrum{% endblock %}
+{% block title %}Result list{% endblock %}
 
 {% block findnavigation %}
     <div class="resultCount">{{ pagination.getTotalItemCount }} {% trans %}numfound{% endtrans %}</div>
@@ -9,15 +9,11 @@
 
 {% block body %}
 
-    <ol class="resultList">
+    <ol class="resultList" start="{{ offset }}">
         {% for result in pagination %}
             <li>
                 <article>
                     <h1><a href="{{ path('subugoe_find_detail', {'id': result.fields.id}) }}">{{ result.fields.bytitle }}</a></h1>
-
-                    {% if result.fields.thumbs_url is defined %}
-                        <img src="{{ result.fields.thumbs_url.0 }}" alt="">
-                    {% endif %}
                 </article>
             </li>
         {% endfor %}
