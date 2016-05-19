@@ -12,11 +12,19 @@ class DefaultController extends Controller
     public function indexAction(Request $request)
     {
 
+        $query = $request->get('q');
+
         $facetConfiguration = $this->getParameter('facets');
 
         $client = $this->get('solarium.client');
         $select = $client->createSelect();
-        $select->setQuery('iswork:true');
+
+        if (empty($query)) {
+            $select->setQuery('iswork:true');
+        } else {
+            $select->setQuery($query);
+        }
+
 
         $facetSet = $select->getFacetSet();
         foreach ($facetConfiguration as $facet) {
@@ -50,7 +58,8 @@ class DefaultController extends Controller
             'results' => $results,
             'facets' => $results->getFacetSet()->getFacets(),
             'facetCounter' => $facetCounter,
-            'queryParams' => $request->get('filter') ?: []
+            'queryParams' => $request->get('filter') ?: [],
+            'query' => $query,
         ]);
     }
 
