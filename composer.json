@@ -8,8 +8,7 @@
             "email": "i.pfennigstorf@gmail.com"
         }
     ],
-    "target-dir" : "Subugoe/FindBundle",
     "autoload": {
-       "psr-0": { "Subugoe\\FindBundle\\": "" }
+       "psr-4": { "Subugoe\\FindBundle\\": "" }
     }
 }
