@@ -19,20 +19,9 @@ class DefaultController extends Controller
         $client = $this->get('solarium.client');
         $select = $client->createSelect();
 
-        $queryComposer = [];
-        $queryComposer[] = $this->getParameter('default_query');
+        $queryString = $this->composeQuery($query);
 
-        if (!empty($query)) {
-            $queryComposer[] = $query;
-        }
-
-        $hiddenDocuments = $this->getParameter('hidden');
-
-        foreach ($hiddenDocuments as $hiddenDocument) {
-            $queryComposer[] = '!' . $hiddenDocument['field'] . ':' .$hiddenDocument['value'];
-        }
-
-        $select->setQuery(join(' AND ', $queryComposer));
+        $select->setQuery($queryString);
 
         $facetSet = $select->getFacetSet();
         foreach ($facetConfiguration as $facet) {
@@ -101,6 +90,29 @@ class DefaultController extends Controller
         $document = $document->getDocuments();
 
         return $this->render('SubugoeFindBundle:Default:detail.html.twig', ['document' => $document[0]->getFields()]);
+    }
+
+    /**
+     * @param $query
+     * @return string
+     */
+    protected function composeQuery($query)
+    {
+        $queryComposer = [];
+        $queryComposer[] = $this->getParameter('default_query');
+
+        if (!empty($query)) {
+            $queryComposer[] = $query;
+        }
+
+        $hiddenDocuments = $this->getParameter('hidden');
+
+        foreach ($hiddenDocuments as $hiddenDocument) {
+            $queryComposer[] = '!' . $hiddenDocument['field'] . ':' . $hiddenDocument['value'];
+        }
+
+        $queryString = join(' AND ', $queryComposer);
+        return $queryString;
     }
 
 }
