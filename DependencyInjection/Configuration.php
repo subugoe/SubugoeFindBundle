@@ -31,6 +31,14 @@ class Configuration implements ConfigurationInterface
                 ->end()
             ->integerNode('results_per_page')
                 ->defaultValue(15)
+            ->end()
+            ->arrayNode('hidden')
+                ->prototype('array')
+                    ->children()
+                        ->scalarNode('field')->end()
+                        ->scalarNode('value')->end()
+                    ->end()
+                ->end()
             ->end();
 
         return $treeBuilder;

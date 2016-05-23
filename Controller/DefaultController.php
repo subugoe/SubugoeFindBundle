@@ -26,6 +26,12 @@ class DefaultController extends Controller
             $queryComposer[] = $query;
         }
 
+        $hiddenDocuments = $this->getParameter('hidden');
+
+        foreach ($hiddenDocuments as $hiddenDocument) {
+            $queryComposer[] = '!' . $hiddenDocument['field'] . ':' .$hiddenDocument['value'];
+        }
+
         $select->setQuery(join(' AND ', $queryComposer));
 
         $facetSet = $select->getFacetSet();
