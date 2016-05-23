@@ -20,7 +20,7 @@ class DefaultController extends Controller
         $select = $client->createSelect();
 
         $queryComposer = [];
-        $queryComposer[] = 'iswork:true';
+        $queryComposer[] = $this->getParameter('default_query');
 
         if (!empty($query)) {
             $queryComposer[] = $query;

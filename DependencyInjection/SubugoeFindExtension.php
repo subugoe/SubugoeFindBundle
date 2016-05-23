@@ -25,6 +25,7 @@ class SubugoeFindExtension extends Extension
         $container->setParameter('facets', $config['facets']);
         $container->setParameter('results_per_page', $config['results_per_page']);
         $container->setParameter('hidden', $config['hidden']);
+        $container->setParameter('default_query', $config['default_query']);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
