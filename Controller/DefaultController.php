@@ -24,6 +24,12 @@ class DefaultController extends Controller
 
         $select->setQuery($queryString);
 
+        $sort = $this->getSorting();
+
+        if (is_array($sort)) {
+            $select->addSort($sort[0], $sort[1]);
+        }
+
         $facetSet = $select->getFacetSet();
         foreach ($facetConfiguration as $facet) {
             $facetSet->createFacetField($facet['title'])->setField($facet['field']);
@@ -118,6 +124,16 @@ class DefaultController extends Controller
 
         $queryString = join(' AND ', $queryComposer);
         return $queryString;
+    }
+
+    protected function getSorting()
+    {
+        $sort = $this->getParameter('default_sort');
+        if (preg_match('/\s/', $sort)) {
+            $sort = explode(' ', $sort);
+        }
+
+        return $sort;
     }
 
 }
