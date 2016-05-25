@@ -80,12 +80,12 @@ class DefaultController extends Controller
      * @Route("/id/{id}", name="_detail")
      * @return string
      */
-    public function detailAction(Request $request)
+    public function detailAction($id)
     {
 
         $client = $this->get('solarium.client');
         $select = $client->createSelect();
-        $select->setQuery('id:' . $request->get('id'));
+        $select->setQuery('id:' . $id);
         $document = $client->select($select);
         $document = $document->getDocuments();
 
