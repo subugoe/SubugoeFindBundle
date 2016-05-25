@@ -6,6 +6,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Solarium\QueryType\Select\Query\FilterQuery;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class DefaultController extends Controller
 {
@@ -88,6 +89,10 @@ class DefaultController extends Controller
         $select->setQuery('id:' . $id);
         $document = $client->select($select);
         $document = $document->getDocuments();
+
+        if (count($document) === 0) {
+            throw new NotFoundHttpException(sprintf('Document %s not found', $id));
+        }
 
         return $this->render('SubugoeFindBundle:Default:detail.html.twig', ['document' => $document[0]->getFields()]);
     }
