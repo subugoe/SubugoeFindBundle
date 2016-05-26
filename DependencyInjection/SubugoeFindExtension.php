@@ -32,7 +32,6 @@ class SubugoeFindExtension extends Extension
         $loader->load('services.yml');
     }
 
-
     public function getAlias()
     {
         return 'subugoe_find';

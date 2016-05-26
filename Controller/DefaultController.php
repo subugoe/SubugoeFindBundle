@@ -12,7 +12,6 @@ class DefaultController extends Controller
 {
     public function indexAction(Request $request)
     {
-
         $query = $request->get('q');
 
         $facetConfiguration = $this->getParameter('facets');
@@ -40,32 +39,29 @@ class DefaultController extends Controller
         $facetCounter = count($activeFacets) ?: 0;
 
         if (count($activeFacets) > 0) {
-
             foreach ($activeFacets as $activeFacet) {
                 $filterQuery = new FilterQuery();
 
                 foreach ($activeFacet as $itemKey => $item) {
-                    $filterQuery->setKey($itemKey . $facetCounter);
-                    $filterQuery->setQuery($itemKey . ':"' . $item . '"');
+                    $filterQuery->setKey($itemKey.$facetCounter);
+                    $filterQuery->setQuery($itemKey.':"'.$item.'"');
                 }
 
                 $select->addFilterQuery($filterQuery);
                 ++$facetCounter;
-
             }
-
         }
 
         $results = $client->select($select);
 
-        $paginator  = $this->get('knp_paginator');
+        $paginator = $this->get('knp_paginator');
         $rows = (int) $this->getParameter('results_per_page');
-        $currentPage = (int)$request->get('page') ?: 1;
+        $currentPage = (int) $request->get('page') ?: 1;
 
         $pagination = $paginator->paginate(
             [
                 $client,
-                $select
+                $select,
             ],
             $currentPage,
             $rows
@@ -85,14 +81,14 @@ class DefaultController extends Controller
 
     /**
      * @Route("/id/{id}", name="_detail")
+     *
      * @return string
      */
     public function detailAction($id)
     {
-
         $client = $this->get('solarium.client');
         $select = $client->createSelect();
-        $select->setQuery('id:' . $id);
+        $select->setQuery('id:'.$id);
         $document = $client->select($select);
         $document = $document->getDocuments();
 
@@ -105,6 +101,7 @@ class DefaultController extends Controller
 
     /**
      * @param $query
+     *
      * @return string
      */
     protected function composeQuery($query)
@@ -119,10 +116,11 @@ class DefaultController extends Controller
         $hiddenDocuments = $this->getParameter('hidden');
 
         foreach ($hiddenDocuments as $hiddenDocument) {
-            $queryComposer[] = '!' . $hiddenDocument['field'] . ':' . $hiddenDocument['value'];
+            $queryComposer[] = '!'.$hiddenDocument['field'].':'.$hiddenDocument['value'];
         }
 
-        $queryString = join(' AND ', $queryComposer);
+        $queryString = implode(' AND ', $queryComposer);
+
         return $queryString;
     }
 
@@ -135,5 +133,4 @@ class DefaultController extends Controller
 
         return $sort;
     }
-
 }
