@@ -10,6 +10,9 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class DefaultController extends Controller
 {
+    /**
+     * @Route("/", name="_homepage")
+     */
     public function indexAction(Request $request)
     {
         $query = $request->get('q');
