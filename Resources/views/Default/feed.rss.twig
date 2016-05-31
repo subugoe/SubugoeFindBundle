@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+{% set firstElement = feeds|first %}
+<rss version="2.0">
+    <channel>
+        <title>RSS-Feed</title>
+        <pubDate>{{ firstElement.dateindexed }}</pubDate>
+        <lastBuildDate>{{ firstElement.dateindexed }}</lastBuildDate>
+        <description>RSS-Feed</description>
+        {% for feed in feeds %}
+            <item>
+                <title>{{ feed.bytitle }}</title>
+                <link>{{ feed.purl }}</link>
+                <pubDate>{{ feed.dateindexed }}</pubDate>
+                <description><![CDATA[
+                    {{ feed.dateindexed|date("d.m.Y") }}
+                ]]></description>
+            </item>
+        {% endfor %}
+    </channel>
+</rss>

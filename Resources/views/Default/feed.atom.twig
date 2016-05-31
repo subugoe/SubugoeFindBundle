@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+{% set firstElement = feeds|first %}
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <title>Atom-Feed</title>
+    <updated>{{ firstElement.dateindexed }}</updated>
+    <link type="application/atom+xml" rel="self" href="" />
+    {% for feed in feeds %}
+        <entry>
+            <link type="text/html" rel="alternate" href="{{ feed.purl }}" />
+            <title>{{ feed.bytitle }}</title>
+            <published>{{ feed.dateindexed }}</published>
+            <content type="html"><![CDATA[
+                {{ feed.dateindexed|date("d.m.Y") }}
+            ]]></content>
+        </entry>
+    {% endfor %}
+</feed>
