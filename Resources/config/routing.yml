@@ -5,3 +5,13 @@ subugoe_find_homepage:
 subugoe_find_detail:
     path: /id/{id}
     defaults: { _controller: SubugoeFindBundle:Default:detail }
+
+subugoe_find_rss:
+    path:     /feed/{_format}
+    defaults: { _controller: SubugoeFindBundle:Default:feed }
+    requirements: { _format: (rss) }
+
+subugoe_find_atom:
+    path:     /feed/{_format}
+    defaults: { _controller: SubugoeFindBundle:Default:feed }
+    requirements: { _format: (atom) }

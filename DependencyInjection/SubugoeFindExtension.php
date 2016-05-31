@@ -27,6 +27,9 @@ class SubugoeFindExtension extends Extension
         $container->setParameter('hidden', $config['hidden']);
         $container->setParameter('default_query', $config['default_query']);
         $container->setParameter('default_sort', $config['default_sort']);
+        $container->setParameter('feed_sort', $config['feed_sort']);
+        $container->setParameter('feed_rows', $config['feed_rows']);
+        $container->setParameter('feed_fields', $config['feed_fields']);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
