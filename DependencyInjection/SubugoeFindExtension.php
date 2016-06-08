@@ -30,6 +30,7 @@ class SubugoeFindExtension extends Extension
         $container->setParameter('feed_sort', $config['feed_sort']);
         $container->setParameter('feed_rows', $config['feed_rows']);
         $container->setParameter('feed_fields', $config['feed_fields']);
+        $container->setParameter('feed_category', $config['feed_category']);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');

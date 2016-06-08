@@ -75,29 +75,4 @@ class DefaultController extends Controller
 
         return $this->render('SubugoeFindBundle:Default:detail.html.twig', ['document' => $document[0]->getFields()]);
     }
-
-    /**
-     * @Route("/feed/{_format}", name="_feed")
-     */
-    public function feedAction($_format)
-    {
-        $client = $this->get('solarium.client');
-
-        $select = $client
-            ->createSelect()
-            ->setQuery($this->getParameter('default_query'))
-            ->setFields($this->getParameter('feed_fields'))
-            ->setRows($this->getParameter('feed_rows'));
-
-        $sort = $this->get('subugoe_find.query_service')->getSorting($this->getParameter('feed_sort'));
-
-        if (is_array($sort) && $sort != []) {
-            $select->addSort($sort[0], $sort[1]);
-        }
-
-        $feeds = $client->select($select);
-        $template = sprintf('SubugoeFindBundle:Default:feed.%s.twig', $_format);
-
-        return $this->render($template, ['feeds' => $feeds]);
-    }
 }
