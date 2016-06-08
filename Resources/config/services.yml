@@ -1,4 +1,8 @@
 services:
-#    subugoe_find.example:
-#        class: Subugoe\FindBundle\Example
-#        arguments: ["@service_id", "plain_value", %parameter%]
+    subugoe_find.query_service:
+        class: Subugoe\FindBundle\Service\QueryService
+        arguments: [%default_query%, %default_sort%, %hidden%, %facets%]
+
+    default_controller:
+        class: Subugoe\FindBundle\Controller\DefaultController
+        arguments: ['@subugoe_find.query_service']
