@@ -88,7 +88,7 @@ class QueryService
             foreach ($activeFacets as $activeFacet) {
                 $filterQuery = new FilterQuery();
                 foreach ($activeFacet as $itemKey => $item) {
-                    $filterQuery->setKey($itemKey.$this->getFacetCounter($activeFacets));
+                    $filterQuery->setKey($itemKey.$this->getFacetCounter($activeFacets).md5(microtime()));
                     $filterQuery->setQuery(vsprintf('%s:"%s"', [$itemKey, $item]));
                 }
                 $filterQueries[] = $filterQuery;
