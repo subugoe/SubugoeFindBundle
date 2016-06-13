@@ -42,7 +42,7 @@ class Configuration implements ConfigurationInterface
                 ->defaultValue('*:*')
             ->end()
             ->scalarNode('default_sort')
-                ->defaultValue('')
+                ->defaultValue('score desc')
             ->end()
             ->scalarNode('feed_sort')
                 ->defaultValue('')

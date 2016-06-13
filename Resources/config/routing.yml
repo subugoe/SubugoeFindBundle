@@ -8,10 +8,10 @@ subugoe_find_detail:
 
 subugoe_find_rss:
     path:     /feed/{_format}
-    defaults: { _controller: SubugoeFindBundle:Default:feed }
+    defaults: { _controller: SubugoeFindBundle:Feed:feed }
     requirements: { _format: (rss) }
 
 subugoe_find_atom:
     path:     /feed/{_format}
-    defaults: { _controller: SubugoeFindBundle:Default:feed }
+    defaults: { _controller: SubugoeFindBundle:Feed:feed }
     requirements: { _format: (atom) }
