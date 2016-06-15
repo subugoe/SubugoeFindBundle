@@ -3,6 +3,7 @@
 namespace Subugoe\FindBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Subugoe\FindBundle\Entity\Search;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -17,11 +18,16 @@ class DefaultController extends Controller
         $client = $this->get('solarium.client');
         $queryService = $this->get('subugoe_find.query_service');
 
-        $query = $request->get('q');
+        $search = new Search();
+        $search
+            ->setQuery($request->get('q'))
+            ->setRows((int) $this->getParameter('results_per_page'))
+            ->setCurrentPage((int) $request->get('page') ?: 1);
+
         $activeFacets = $request->get('filter');
 
         $select = $client->createSelect();
-        $select->setQuery($queryService->composeQuery($query));
+        $select->setQuery($queryService->composeQuery($search->getQuery()));
         $sort = $queryService->getSorting();
 
         if (is_array($sort) && $sort != []) {
@@ -36,26 +42,21 @@ class DefaultController extends Controller
             $select->addFilterQuery($filter);
         }
 
-        $rows = (int) $this->getParameter('results_per_page');
-        $currentPage = (int) $request->get('page') ?: 1;
-
         $pagination = $this->get('knp_paginator')->paginate(
             [
                 $client,
                 $select,
             ],
-            $currentPage,
-            $rows
+            $search->getCurrentPage(),
+            $search->getRows()
         );
-        $offset = ($currentPage - 1) * $rows;
 
         return $this->render('SubugoeFindBundle:Default:index.html.twig', [
             'facets' => $client->select($select)->getFacetSet()->getFacets(),
             'facetCounter' => $queryService->getFacetCounter($activeFacets),
             'queryParams' => $request->get('filter') ?: [],
-            'query' => $query,
+            'search' => $search,
             'pagination' => $pagination,
-            'offset' => $offset,
         ]);
     }
 
