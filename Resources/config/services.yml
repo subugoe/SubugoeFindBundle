@@ -1,8 +1,8 @@
 services:
     subugoe_find.query_service:
         class: Subugoe\FindBundle\Service\QueryService
-        arguments: [%default_query%, %default_sort%, %hidden%, %facets%]
+        arguments: ["%default_query%", "%default_sort%", "%hidden%", "%facets%"]
 
     default_controller:
         class: Subugoe\FindBundle\Controller\DefaultController
-        arguments: ['@subugoe_find.query_service']
+        arguments: ["@subugoe_find.query_service"]
