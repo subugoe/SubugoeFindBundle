@@ -81,7 +81,14 @@ class QueryService
         $filterQueries = [];
         $facetCounter = $this->getFacetCounter($activeFacets);
         foreach ($facetConfiguration as $facet) {
-            $facetSet->createFacetField($facet['title'])->setField($facet['field']);
+            $facetSet
+                ->createFacetField($facet['title'])
+                ->setField($facet['field'])
+                ->setSort($facet['sort']);
+
+            if ($facet['sort'] === 'index') {
+                $facetSet->setLimit(1000);
+            }
         }
 
         if (count($activeFacets) > 0) {

@@ -26,6 +26,7 @@ class Configuration implements ConfigurationInterface
                         ->children()
                             ->scalarNode('field')->end()
                             ->scalarNode('title')->end()
+                            ->scalarNode('sort')->defaultValue('count')->end()
                         ->end()
                     ->end()
                 ->end()

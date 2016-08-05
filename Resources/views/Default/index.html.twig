@@ -13,7 +13,7 @@
         {% for result in pagination %}
             <li>
                 <article>
-                    <h1><a href="{{ path('subugoe_find_detail', {'id': result.fields.id}) }}">{{ result.fields.bytitle }}</a></h1>
+                    <h1><a href="{{ path('subugoe_find_detail', {'id': result.fields.id}) }}">{{ result.fields.title | first }}</a></h1>
                 </article>
             </li>
         {% endfor %}

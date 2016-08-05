@@ -7,7 +7,7 @@
     {% for feed in feeds %}
         <entry>
             <link type="text/html" rel="alternate" href="{{ feed.purl }}" />
-            <title>{{ feed.bytitle }}</title>
+            <title>{{ feed.title | first }}</title>
             <published>{{ feed.dateindexed }}</published>
             <content type="html"><![CDATA[
                 {{ feed.dateindexed|date("d.m.Y") }}
