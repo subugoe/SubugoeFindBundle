@@ -7,6 +7,7 @@ use Subugoe\FindBundle\Entity\Search;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Solarium\QueryType\Select\Query\FilterQuery;
 
 class DefaultController extends Controller
 {
@@ -34,9 +35,21 @@ class DefaultController extends Controller
             $select->addSort($sort[0], $sort[1]);
         }
 
+        $collection = $request->get('collection');
+        if (!empty($collection) && $collection !== 'all') {
+            $dcFilter = new FilterQuery();
+            $collectionFilter[] = $dcFilter->setKey('dc')->setQuery('dc:'.$collection);
+        }
+
         $facetSet = $select->getFacetSet();
 
-        $filters = $queryService->addFacets($facetSet, $activeFacets);
+        $activeFilters = $queryService->addFacets($facetSet, $activeFacets);
+        if (isset($collectionFilter)) {
+            $filters = array_merge($activeFilters, $collectionFilter);
+        }
+        else {
+            $filters = $activeFilters;
+        }
 
         foreach ($filters as $filter) {
             $select->addFilterQuery($filter);
@@ -57,6 +70,8 @@ class DefaultController extends Controller
             'queryParams' => $request->get('filter') ?: [],
             'search' => $search,
             'pagination' => $pagination,
+            'activeCollection' => $request->get('activeCollection'),
+            'collection' => $collection,
         ]);
     }
 
