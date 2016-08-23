@@ -96,7 +96,13 @@ class QueryService
                 $filterQuery = new FilterQuery();
                 foreach ($activeFacet as $itemKey => $item) {
                     $filterQuery->setKey($itemKey.$this->getFacetCounter($activeFacets).md5(microtime()));
-                    $filterQuery->setQuery(vsprintf('%s:"%s"', [$itemKey, $item]));
+
+                    if (preg_match('/\[[a-zA-Z0-9_]* TO [a-zA-Z0-9_]*\]/', $item)) {
+                        $filterQuery->setQuery(vsprintf('%s:%s', [$itemKey, $item]));
+
+                    } else {
+                        $filterQuery->setQuery(vsprintf('%s:"%s"', [$itemKey, $item]));
+                    }
                 }
                 $filterQueries[] = $filterQuery;
                 ++$facetCounter;
