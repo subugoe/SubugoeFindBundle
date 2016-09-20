@@ -84,11 +84,8 @@ class QueryService
             $facetSet
                 ->createFacetField($facet['title'])
                 ->setField($facet['field'])
+                ->setLimit($facet['quantity'])
                 ->setSort($facet['sort']);
-
-            if ($facet['sort'] === 'index') {
-                $facetSet->setLimit(1000);
-            }
         }
 
         if (count($activeFacets) > 0) {
@@ -99,7 +96,6 @@ class QueryService
 
                     if (preg_match('/\[[a-zA-Z0-9_]* TO [a-zA-Z0-9_]*\]/', $item)) {
                         $filterQuery->setQuery(vsprintf('%s:%s', [$itemKey, $item]));
-
                     } else {
                         $filterQuery->setQuery(vsprintf('%s:"%s"', [$itemKey, $item]));
                     }
