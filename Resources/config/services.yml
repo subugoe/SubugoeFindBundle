@@ -6,3 +6,7 @@ services:
     default_controller:
         class: Subugoe\FindBundle\Controller\DefaultController
         arguments: ["@subugoe_find.query_service"]
+
+    subugoe_find.search_service:
+      class: Subugoe\FindBundle\Service\SearchService
+      arguments: ["@request_stack", "@solarium.client", "@subugoe_find.query_service", "@knp_paginator", "%results_per_page%"]

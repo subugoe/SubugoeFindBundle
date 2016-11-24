@@ -4,6 +4,7 @@ namespace Subugoe\FindBundle\Service;
 
 use Solarium\QueryType\Select\Query\Component\FacetSet;
 use Solarium\QueryType\Select\Query\FilterQuery;
+use Solarium\QueryType\Select\Query\Query;
 
 /**
  * Services for query manipulation and extraction.
@@ -113,5 +114,34 @@ class QueryService
         $facetCounter = count($activeFacets) ?: 0;
 
         return $facetCounter;
+    }
+
+    /*
+     * @param Query $select A Query instance
+     */
+    public function addQuerySort(Query $select, $sort = '', $order = '')
+    {
+        if (!empty($sort) && !empty($order)) {
+            $sort = $this->getSorting($sort.' '.$order);
+        } else {
+            $sort = $this->getSorting();
+        }
+
+        if (is_array($sort) && $sort != []) {
+            $select->addSort($sort[0], $sort[1]);
+        }
+    }
+
+    /*
+     * @param Query $select A Query instance
+     * @param array $activeFacets Array of active facets
+     */
+    public function addQueryFilters(Query $select, $activeFacets)
+    {
+        $facetSet = $select->getFacetSet();
+        $filters = $this->addFacets($facetSet, $activeFacets);
+        foreach ($filters as $filter) {
+            $select->addFilterQuery($filter);
+        }
     }
 }
