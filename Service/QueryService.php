@@ -85,6 +85,7 @@ class QueryService
             $facetSet
                 ->createFacetField($facet['title'])
                 ->setField($facet['field'])
+                ->setMinCount(1)
                 ->setLimit($facet['quantity'])
                 ->setSort($facet['sort']);
         }
