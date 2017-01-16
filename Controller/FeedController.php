@@ -1,17 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Subugoe\FindBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Solarium\QueryType\Select\Query\FilterQuery;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Response;
 
 class FeedController extends Controller
 {
     /**
      * @Route("/feed/{_format}/{category}", name="_feed", defaults={"category" = ""})
      */
-    public function feedAction($_format, $category)
+    public function feedAction(string $_format, string $category): Response
     {
         $client = $this->get('solarium.client');
 

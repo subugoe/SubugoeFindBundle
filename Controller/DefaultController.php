@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Subugoe\FindBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -17,7 +19,7 @@ class DefaultController extends Controller
      *
      * @return Response
      */
-    public function indexAction(Request $request)
+    public function indexAction(Request $request): Response
     {
         $searchService = $this->get('subugoe_find.search_service');
         $queryService = $this->get('subugoe_find.query_service');
@@ -48,7 +50,7 @@ class DefaultController extends Controller
      *
      * @return Response
      */
-    public function detailAction($id, Request $request)
+    public function detailAction(string $id, Request $request): Response
     {
         $client = $this->get('solarium.client');
         $select = $client->createSelect();
