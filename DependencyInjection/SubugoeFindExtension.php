@@ -27,7 +27,16 @@ class SubugoeFindExtension extends Extension
         $container->setParameter('hidden', $config['hidden']);
         $container->setParameter('default_query', $config['default_query']);
         $container->setParameter('default_sort', $config['default_sort']);
+        $container->setParameter('product_fields', $config['product_fields']);
+        $container->setParameter('mets_fields', $config['mets_fields']);
+        $container->setParameter('anchor_fields', $config['anchor_fields']);
+        $container->setParameter('toc_fields', $config['toc_fields']);
         $container->setParameter('default_fields', $config['default_fields']);
+        $container->setParameter('structure_fields', $config['structure_fields']);
+        $container->setParameter('bibliographic_fields', $config['bibliographic_fields']);
+        $container->setParameter('volumes_fields', $config['volumes_fields']);
+        $container->setParameter('volumes_children_fields', $config['volumes_children_fields']);
+        $container->setParameter('details_fields', $config['details_fields']);
         $container->setParameter('feed_sort', $config['feed_sort']);
         $container->setParameter('feed_rows', $config['feed_rows']);
         $container->setParameter('feed_fields', $config['feed_fields']);
