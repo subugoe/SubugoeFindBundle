@@ -1,15 +1,17 @@
 <?php
 
-$config = Symfony\CS\Config\Config::create();
-$config
-    ->level(Symfony\CS\FixerInterface::SYMFONY_LEVEL)
-    ->getFinder()
-    ->files()
-    ->in(__DIR__)
+$finder =  PhpCsFixer\Finder::create()
     ->exclude('build')
     ->exclude('cache')
+    ->exclude('var')
     ->exclude('vendor')
-    ->exclude('tests')
-    ->name('*.php');
+    ->in(__DIR__);
+
+$config = PhpCsFixer\Config::create();
+$config
+    ->setRules([
+        '@Symfony' => true
+    ])
+    ->setFinder($finder);
 
 return $config;

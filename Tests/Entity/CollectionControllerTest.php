@@ -28,10 +28,12 @@ class CollectionControllerTest extends \PHPUnit_Framework_TestCase
             ],
         ];
     }
+
     public function setUp()
     {
         $this->fixture = new Search();
     }
+
     /**
      * @dataProvider counterProvider
      */
