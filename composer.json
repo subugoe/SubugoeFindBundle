@@ -1,7 +1,7 @@
 {
     "name": "subugoe/find-bundle",
     "description": "Solr Index bundle",
-    "license": "GPL-v2.0",
+    "license": "AGPL-1.0",
     "authors": [
         {
             "name": "Ingo Pfennigstorf",
@@ -13,6 +13,7 @@
     },
     "require": {
         "nelmio/solarium-bundle": "^2.3",
-        "friendsofsymfony/rest-bundle": "^2.1"
+        "friendsofsymfony/rest-bundle": "^2.1",
+        "knplabs/knp-paginator-bundle": "^2.5"
     }
 }

@@ -96,4 +96,24 @@ class SearchService
 
         return $select;
     }
+
+    /**
+     * @param string $id
+     *
+     * @return array
+     */
+    public function getDocumentById(string $id)
+    {
+        $select = $this->client->createSelect();
+
+        $select->setQuery(sprintf('id:%s', $id));
+        $document = $this->client->select($select);
+        $document = $document->getDocuments();
+
+        if (count($document) === 0) {
+            throw new \InvalidArgumentException(sprintf('Document %s not found', $id));
+        }
+
+        return $document[0];
+    }
 }
