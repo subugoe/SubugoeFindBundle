@@ -116,4 +116,24 @@ class SearchService
 
         return $document[0];
     }
+
+    /**
+     * @param $field
+     * @param $value
+     * @return \Solarium\QueryType\Select\Result\DocumentInterface
+     */
+    public function getDocumentBy(string $field, string $value)
+    {
+        $select = $this->client->createSelect();
+
+        $select->setQuery(sprintf('%s:"%s"', $field, $value));
+        $document = $this->client->select($select);
+        $document = $document->getDocuments();
+
+        if (count($document) === 0) {
+            throw new \InvalidArgumentException(sprintf('Document with field %s and value %s not found', $field, $value));
+        }
+
+        return $document[0];
+    }
 }
