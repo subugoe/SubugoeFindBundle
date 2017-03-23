@@ -110,9 +110,14 @@ class QueryService
         return $filterQueries;
     }
 
+    /**
+     * @param array $activeFacets
+     *
+     * @return int
+     */
     public function getFacetCounter($activeFacets)
     {
-        $facetCounter = count($activeFacets) ?: 0;
+        $facetCounter = count($activeFacets);
 
         return $facetCounter;
     }

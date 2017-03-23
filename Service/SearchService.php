@@ -120,6 +120,7 @@ class SearchService
     /**
      * @param $field
      * @param $value
+     *
      * @return \Solarium\QueryType\Select\Result\DocumentInterface
      */
     public function getDocumentBy(string $field, string $value)
