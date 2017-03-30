@@ -2,12 +2,13 @@
 
 namespace Subugoe\FindBundle\Tests\Service;
 
+use PHPUnit\Framework\TestCase;
 use Subugoe\FindBundle\Service\QueryService;
 
 /**
  * Unit tests for QueryService methods.
  */
-class QueryServiceTest extends \PHPUnit_Framework_TestCase
+class QueryServiceTest extends TestCase
 {
     /**
      * @var QueryService
