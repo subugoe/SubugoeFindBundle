@@ -1,11 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Subugoe\FindBundle\Service;
 
+use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Solarium\Client;
 use Solarium\QueryType\Select\Query\Query;
+use Solarium\QueryType\Select\Result\DocumentInterface;
 use Subugoe\FindBundle\Entity\Search;
+use Subugoe\IIIFBundle\Model\Document;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class SearchService
@@ -47,7 +52,7 @@ class SearchService
     /**
      * @return Search
      */
-    public function getSearchEntity()
+    public function getSearchEntity(): Search
     {
         $search = new Search();
 
@@ -71,7 +76,7 @@ class SearchService
      *
      * @return array $pagination A selected set of pages
      */
-    public function getPagination(Query $select)
+    public function getPagination(Query $select): PaginationInterface
     {
         $pagination = $this->paginator->paginate(
             [
@@ -88,11 +93,25 @@ class SearchService
      /*
       * @return Query $select A Query instance
       */
-    public function getQuerySelect()
+    public function getQuerySelect(): Query
     {
         $search = $this->getSearchEntity();
         $select = $this->client->createSelect();
-        $select->setQuery($this->queryService->composeQuery($search->getQuery()));
+        $select
+            ->setQuery($this->queryService->composeQuery($search->getQuery()));
+
+        return $select;
+    }
+
+    /**
+     * @param Query  $select
+     * @param string $field
+     *
+     * @return Query
+     */
+    public function addHighlighting(Query $select, string $field): Query
+    {
+        $select->getHighlighting()->addField($field);
 
         return $select;
     }
@@ -100,9 +119,9 @@ class SearchService
     /**
      * @param string $id
      *
-     * @return array
+     * @return DocumentInterface
      */
-    public function getDocumentById(string $id)
+    public function getDocumentById(string $id): DocumentInterface
     {
         $select = $this->client->createSelect();
 
@@ -123,7 +142,7 @@ class SearchService
      *
      * @return \Solarium\QueryType\Select\Result\DocumentInterface
      */
-    public function getDocumentBy(string $field, string $value)
+    public function getDocumentBy(string $field, string $value): DocumentInterface
     {
         $select = $this->client->createSelect();
 
