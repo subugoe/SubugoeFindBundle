@@ -137,14 +137,20 @@ class SearchService
     }
 
     /**
-     * @param $field
-     * @param $value
+     * @param string $field
+     * @param string $value
+     * @param array  $fields a list of fields, i.e. ['id', 'title']
      *
      * @return \Solarium\QueryType\Select\Result\DocumentInterface
      */
-    public function getDocumentBy(string $field, string $value): DocumentInterface
+    public function getDocumentBy(string $field, string $value, array $fields = []): DocumentInterface
     {
-        $select = $this->client->createSelect();
+        $select = $this->client
+            ->createSelect();
+
+        if (!empty($fields)) {
+            $select->setFields($fields);
+        }
 
         $select->setQuery(sprintf('%s:"%s"', $field, $value));
         $document = $this->client->select($select);
