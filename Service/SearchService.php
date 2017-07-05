@@ -62,13 +62,15 @@ class SearchService
         $search = new Search();
 
         $scope = $this->request->getMasterRequest()->get('scope');
-
-        if (!empty($scope)) {
-            $search->setQuery($scope.':'.$this->request->getMasterRequest()->get('search')['q']);
-        } else {
-            $search->setQuery(sprintf('%s:%s', $this->request->getMasterRequest()->get('search')['searchType'], $this->request->getMasterRequest()->get('search')['q']));
+        $query = $this->request->getMasterRequest()->get('search')['q'];
+        if (!empty($query)) {
+            if (!empty($scope)) {
+                $search->setQuery(sprintf('%s:%s', $scope, $query));
+            } else {
+                $search->setQuery(sprintf('%s:%s', $this->request->getMasterRequest()->get('search')['searchType'],
+                    $query));
+            }
         }
-
         $search
             ->setRows((int) $this->resultsPerPage)
             ->setCurrentPage((int) $this->request->getMasterRequest()->get('page') ?: 1);
@@ -76,7 +78,7 @@ class SearchService
         return $search;
     }
 
-    /*
+    /**
      * @param Query $select A Query instance
      *
      * @return array $pagination A selected set of pages
@@ -95,7 +97,7 @@ class SearchService
         return $pagination;
     }
 
-    /*
+    /**
      * @return Query $select A Query instance
      */
     public function getQuerySelect(): Query
