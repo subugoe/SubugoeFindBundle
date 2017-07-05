@@ -3,16 +3,16 @@
 <rss version="2.0">
     <channel>
         <title>RSS-Feed</title>
-        <pubDate>{{ firstElement.dateindexed }}</pubDate>
-        <lastBuildDate>{{ firstElement.dateindexed }}</lastBuildDate>
+        <pubDate>{{ firstElement.date_indexed }}</pubDate>
+        <lastBuildDate>{{ firstElement.date_indexed }}</lastBuildDate>
         <description>RSS-Feed</description>
         {% for feed in feeds %}
             <item>
                 <title>{{ feed.title | first }}</title>
                 <link>{{ feed.purl }}</link>
-                <pubDate>{{ feed.dateindexed }}</pubDate>
+                <pubDate>{{ feed.date_indexed }}</pubDate>
                 <description><![CDATA[
-                    {{ feed.dateindexed|date("d.m.Y") }}
+                    {{ feed.date_indexed|date("d.m.Y") }}
                 ]]></description>
             </item>
         {% endfor %}

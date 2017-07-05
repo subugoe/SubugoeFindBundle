@@ -40,8 +40,13 @@ class SearchService
      */
     private $paginator;
 
-    public function __construct(RequestStack $request, Client $client, QueryService $queryService, PaginatorInterface $paginator, int $resultsPerPage)
-    {
+    public function __construct(
+        RequestStack $request,
+        Client $client,
+        QueryService $queryService,
+        PaginatorInterface $paginator,
+        int $resultsPerPage
+    ) {
         $this->request = $request;
         $this->resultsPerPage = $resultsPerPage;
         $this->client = $client;
@@ -59,9 +64,9 @@ class SearchService
         $scope = $this->request->getMasterRequest()->get('scope');
 
         if (!empty($scope)) {
-            $search->setQuery($scope.':'.$this->request->getMasterRequest()->get('q'));
+            $search->setQuery($scope.':'.$this->request->getMasterRequest()->get('search')['q']);
         } else {
-            $search->setQuery($this->request->getMasterRequest()->get('q'));
+            $search->setQuery(sprintf('%s:%s', $this->request->getMasterRequest()->get('search')['searchType'], $this->request->getMasterRequest()->get('search')['q']));
         }
 
         $search
@@ -90,9 +95,9 @@ class SearchService
         return $pagination;
     }
 
-     /*
-      * @return Query $select A Query instance
-      */
+    /*
+     * @return Query $select A Query instance
+     */
     public function getQuerySelect(): Query
     {
         $search = $this->getSearchEntity();
