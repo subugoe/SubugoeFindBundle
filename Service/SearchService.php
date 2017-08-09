@@ -40,18 +40,25 @@ class SearchService
      */
     private $paginator;
 
+    /**
+     * @var array
+     */
+    private $snippetConfig;
+
     public function __construct(
         RequestStack $request,
         Client $client,
         QueryService $queryService,
         PaginatorInterface $paginator,
-        int $resultsPerPage
+        int $resultsPerPage,
+        array $snippetConfig
     ) {
         $this->request = $request;
         $this->resultsPerPage = $resultsPerPage;
         $this->client = $client;
         $this->queryService = $queryService;
         $this->paginator = $paginator;
+        $this->snippetConfig = $snippetConfig;
     }
 
     /**
@@ -168,5 +175,74 @@ class SearchService
         }
 
         return $document[0];
+    }
+
+    /**
+     * @param PaginationInterface $pagination
+     * @param string              $searchTerms
+     *
+     * @return array $highlightss
+     */
+    public function getHighlights(PaginationInterface $pagination, string $searchTerms): array
+    {
+        $highlights = [];
+
+        if ($pagination != [] && !empty($searchTerms)) {
+            $docsToBeHighlighted = [];
+
+            foreach ($pagination as $page) {
+                $docsToBeHighlighted[] = $page->id;
+            }
+
+            if (strpos($searchTerms, ' ')) {
+                $searchTerms = explode(' ', $searchTerms);
+            }
+
+            foreach ($docsToBeHighlighted as $docId) {
+                $select = $this->client->createSelect();
+                $pageNr = $this->snippetConfig['page_nr'];
+                $pageFulltext = $this->snippetConfig['page_fulltext'];
+
+                if (is_array($searchTerms) && $searchTerms != []) {
+                    $query = sprintf($pageNr.':%s AND (', $docId);
+
+                    foreach ($searchTerms as $key => $searchTerm) {
+                        if ($key === 0) {
+                            $query .= sprintf($pageFulltext.':%s', $searchTerm);
+                        } else {
+                            $query .= sprintf(' OR '.$pageFulltext.':%s', $searchTerm);
+                        }
+                    }
+
+                    $query .= ')';
+                } else {
+                    $query = sprintf($pageNr.':%s AND '.$pageFulltext.':%s', $docId, $searchTerms);
+                }
+
+                $select->setQuery($query);
+
+                $snippetCount = $this->client->select($select)->getNumFound();
+
+                $select->setRows($snippetCount)->addSort($this->snippetConfig['sort'], $this->snippetConfig['sort_dir']);
+
+                $select->getHighlighting()
+                        ->setFields($this->snippetConfig['field'])
+                        ->setSnippets($this->snippetConfig['count'])
+                        ->setFragSize($this->snippetConfig['length'])
+                        ->setSimplePrefix($this->snippetConfig['prefix'])
+                        ->setSimplePostfix($this->snippetConfig['postfix']);
+
+                $resultSet = $this->client->select($select);
+                $highlighting = $resultSet->getHighlighting();
+
+                foreach ($resultSet as $key => $document) {
+                    $doc = $highlighting->getResult($document->id);
+                    $snippets = $doc->getField($this->snippetConfig['field']);
+                    $highlights[$docId][$key] = ['pageNo' => $document->ft_page_number, 'snippets' => $snippets];
+                }
+            }
+        }
+
+        return $highlights;
     }
 }

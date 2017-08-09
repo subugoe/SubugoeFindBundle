@@ -62,6 +62,19 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('value')->end()
                     ->end()
                 ->end()
+            ->end()
+            ->arrayNode('snippet')
+                ->children()
+                    ->scalarNode('count')->end()
+                    ->scalarNode('length')->end()
+                    ->scalarNode('prefix')->end()
+                    ->scalarNode('postfix')->end()
+                    ->scalarNode('field')->end()
+                    ->scalarNode('sort')->end()
+                    ->scalarNode('sort_dir')->end()
+                    ->scalarNode('page_fulltext')->end()
+                    ->scalarNode('page_nr')->end()
+                ->end()
             ->end();
 
         return $treeBuilder;
