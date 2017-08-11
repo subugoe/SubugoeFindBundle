@@ -195,7 +195,7 @@ class SearchService
             }
 
             if (strpos($searchTerms, ' ')) {
-                $searchTerms = explode(' ', $searchTerms);
+                $searchTerms = explode(' ', trim($searchTerms));
             }
 
             foreach ($docsToBeHighlighted as $docId) {
