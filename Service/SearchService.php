@@ -181,7 +181,7 @@ class SearchService
      * @param PaginationInterface $pagination
      * @param string              $searchTerms
      *
-     * @return array $highlightss
+     * @return array $highlights
      */
     public function getHighlights(PaginationInterface $pagination, string $searchTerms): array
     {
@@ -200,26 +200,8 @@ class SearchService
 
             foreach ($docsToBeHighlighted as $docId) {
                 $select = $this->client->createSelect();
-                $pageNumber = $this->snippetConfig['page_number'];
-                $pageFulltext = $this->snippetConfig['page_fulltext'];
 
-                if (is_array($searchTerms) && $searchTerms !== []) {
-                    $query = sprintf('%s:%s AND (', $pageNumber, $docId);
-
-                    foreach ($searchTerms as $key => $searchTerm) {
-                        if ($key === 0) {
-                            $query .= sprintf('%s:%s', $pageFulltext, $searchTerm);
-                        } else {
-                            $query .= sprintf(' OR %s:%s', $pageFulltext, $searchTerm);
-                        }
-                    }
-
-                    $query .= ')';
-                } else {
-                    $query = sprintf('%s:%s AND %s:%s', $pageNumber, $docId, $pageFulltext, $searchTerms);
-                }
-
-                $select->setQuery($query);
+                $select->setQuery($this->getQuery($searchTerms, $docId));
 
                 $snippetCount = $this->client->select($select)->getNumFound();
 
@@ -244,5 +226,33 @@ class SearchService
         }
 
         return $highlights;
+    }
+
+    /**
+     * @param string $searchTerms
+     * @param $docId
+     * @return string
+     */
+    private function getQuery(string $searchTerms, $docId): string
+    {
+        $pageNumber = $this->snippetConfig['page_number'];
+        $pageFulltext = $this->snippetConfig['page_fulltext'];
+
+        if (is_array($searchTerms) && $searchTerms !== []) {
+            $query = sprintf('%s:%s AND (', $pageNumber, $docId);
+
+            foreach ($searchTerms as $key => $searchTerm) {
+                if ($key === 0) {
+                    $query .= sprintf('%s:%s', $pageFulltext, $searchTerm);
+                } else {
+                    $query .= sprintf(' OR %s:%s', $pageFulltext, $searchTerm);
+                }
+            }
+
+            $query .= ')';
+        } else {
+            $query = sprintf('%s:%s AND %s:%s', $pageNumber, $docId, $pageFulltext, $searchTerms);
+        }
+        return $query;
     }
 }
