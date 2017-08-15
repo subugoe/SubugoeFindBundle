@@ -11,7 +11,6 @@ use Subugoe\FindBundle\Service\SearchService;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-
 /**
  * Unit tests for SearchService methods.
  */
@@ -22,7 +21,6 @@ class SearchServiceTest extends TestCase
      */
     protected $fixture;
 
-
     public function setUp()
     {
         $requestStack = $this->getMockBuilder(RequestStack::class)->getMock();
@@ -31,7 +29,7 @@ class SearchServiceTest extends TestCase
         $paginator = new Paginator(new EventDispatcher());
         $snippetConfig = [
             'page_number' => 43,
-            'page_fulltext' => 3
+            'page_fulltext' => 3,
         ];
         $this->fixture = new SearchService($requestStack, $client, $queryService, $paginator, 30, $snippetConfig);
     }
@@ -39,24 +37,23 @@ class SearchServiceTest extends TestCase
     public function testTrimmingOfTheSearchQuery()
     {
         $this->markTestIncomplete('Solr has to be mocked');
-        $dispatcher = new EventDispatcher;
+        $dispatcher = new EventDispatcher();
         $dispatcher->addSubscriber(new PaginationSubscriber());
 
-        $items = function() {
+        $items = function () {
             $classes = [];
             foreach (range(1, 23) as $id) {
                 $class = new \stdClass();
                 $class->id = $id;
                 $classes[] = $class;
             }
+
             return $classes;
         };
-
 
         $pagination = new Paginator($dispatcher);
         $view = $pagination->paginate($items(), 1, 10);
 
         $this->assertEmpty($this->fixture->getHighlights($view, 'a'));
     }
-
 }

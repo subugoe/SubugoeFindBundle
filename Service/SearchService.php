@@ -7,10 +7,10 @@ namespace Subugoe\FindBundle\Service;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Solarium\Client;
+use Solarium\QueryType\Select\Query\FilterQuery;
 use Solarium\QueryType\Select\Query\Query;
 use Solarium\QueryType\Select\Result\DocumentInterface;
 use Subugoe\FindBundle\Entity\Search;
-use Subugoe\IIIFBundle\Model\Document;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class SearchService
@@ -171,7 +171,8 @@ class SearchService
         $document = $document->getDocuments();
 
         if (count($document) === 0) {
-            throw new \InvalidArgumentException(sprintf('Document with field %s and value %s not found', $field, $value));
+            throw new \InvalidArgumentException(sprintf('Document with field %s and value %s not found', $field,
+                $value));
         }
 
         return $document[0];
@@ -205,14 +206,15 @@ class SearchService
 
                 $snippetCount = $this->client->select($select)->getNumFound();
 
-                $select->setRows($snippetCount)->addSort($this->snippetConfig['sort'], $this->snippetConfig['sort_dir']);
+                $select->setRows($snippetCount)->addSort($this->snippetConfig['sort'],
+                    $this->snippetConfig['sort_dir']);
 
                 $select->getHighlighting()
-                        ->setFields($this->snippetConfig['field'])
-                        ->setSnippets($this->snippetConfig['count'])
-                        ->setFragSize($this->snippetConfig['length'])
-                        ->setSimplePrefix($this->snippetConfig['prefix'])
-                        ->setSimplePostfix($this->snippetConfig['postfix']);
+                    ->setFields($this->snippetConfig['field'])
+                    ->setSnippets($this->snippetConfig['count'])
+                    ->setFragSize($this->snippetConfig['length'])
+                    ->setSimplePrefix($this->snippetConfig['prefix'])
+                    ->setSimplePostfix($this->snippetConfig['postfix']);
 
                 $resultSet = $this->client->select($select);
                 $highlighting = $resultSet->getHighlighting();
@@ -228,9 +230,22 @@ class SearchService
         return $highlights;
     }
 
+    public function getLatestDocument(string $dateField = 'date_indexed')
+    {
+        $filter = (new FilterQuery())->setQuery('-doctype:fulltext')->setKey('doctype');
+        $select = $this->client
+            ->createSelect()
+            ->setRows(1)
+            ->addFilterQuery($filter)
+            ->addSort($dateField, 'desc');
+
+        return $this->client->select($select)->getDocuments()[0];
+    }
+
     /**
      * @param string $searchTerms
      * @param $docId
+     *
      * @return string
      */
     private function getQuery(string $searchTerms, $docId): string
@@ -253,6 +268,7 @@ class SearchService
         } else {
             $query = sprintf('%s:%s AND %s:%s', $pageNumber, $docId, $pageFulltext, $searchTerms);
         }
+
         return $query;
     }
 }
