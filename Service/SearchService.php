@@ -21,11 +21,6 @@ class SearchService
     private $request;
 
     /**
-     * @var int
-     */
-    private $resultsPerPage;
-
-    /**
      * @var Client
      */
     private $client;
@@ -43,7 +38,7 @@ class SearchService
     /**
      * @var array
      */
-    private $snippetConfig;
+    private $configuration;
 
     public function __construct(
         RequestStack $request,
@@ -59,8 +54,7 @@ class SearchService
 
     public function setConfig(array $config)
     {
-        $this->resultsPerPage = $config['results_per_page'];
-        $this->snippetConfig = $config['snippet'];
+        $this->configuration = $config;
     }
 
     /**
@@ -81,7 +75,7 @@ class SearchService
             }
         }
         $search
-            ->setRows((int) $this->resultsPerPage)
+            ->setRows((int) $this->configuration['results_per_page'])
             ->setCurrentPage((int) $this->request->getMasterRequest()->get('page') ?: 1);
 
         return $search;
@@ -208,22 +202,22 @@ class SearchService
 
                 $snippetCount = $this->client->select($select)->getNumFound();
 
-                $select->setRows($snippetCount)->addSort($this->snippetConfig['sort'],
-                    $this->snippetConfig['sort_dir']);
+                $select->setRows($snippetCount)->addSort($this->configuration['snippet']['sort'],
+                    $this->configuration['snippet']['sort_dir']);
 
                 $select->getHighlighting()
-                    ->setFields($this->snippetConfig['field'])
-                    ->setSnippets($this->snippetConfig['count'])
-                    ->setFragSize($this->snippetConfig['length'])
-                    ->setSimplePrefix($this->snippetConfig['prefix'])
-                    ->setSimplePostfix($this->snippetConfig['postfix']);
+                    ->setFields($this->configuration['snippet']['field'])
+                    ->setSnippets($this->configuration['snippet']['count'])
+                    ->setFragSize($this->configuration['snippet']['length'])
+                    ->setSimplePrefix($this->configuration['snippet']['prefix'])
+                    ->setSimplePostfix($this->configuration['snippet']['postfix']);
 
                 $resultSet = $this->client->select($select);
                 $highlighting = $resultSet->getHighlighting();
 
                 foreach ($resultSet as $key => $document) {
                     $doc = $highlighting->getResult($document->id);
-                    $snippets = $doc->getField($this->snippetConfig['field']);
+                    $snippets = $doc->getField($this->configuration['snippet']['field']);
                     $highlights[$docId][$key] = ['pageNumber' => $document->ft_page_number, 'snippets' => $snippets];
                 }
             }
@@ -252,8 +246,8 @@ class SearchService
      */
     private function getQuery(string $searchTerms, $docId): string
     {
-        $pageNumber = $this->snippetConfig['page_number'];
-        $pageFulltext = $this->snippetConfig['page_fulltext'];
+        $pageNumber = $this->configuration['snippet']['page_number'];
+        $pageFulltext = $this->configuration['snippet']['page_fulltext'];
 
         if (is_array($searchTerms) && $searchTerms !== []) {
             $query = sprintf('%s:%s AND (', $pageNumber, $docId);
