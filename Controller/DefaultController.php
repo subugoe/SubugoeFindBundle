@@ -57,7 +57,7 @@ class DefaultController extends Controller
         $select->setQuery(sprintf('id:%s', $id));
         $document = $client->select($select);
         $document = $document->getDocuments();
-        if (count($document) === 0) {
+        if (0 === count($document)) {
             throw new NotFoundHttpException(sprintf('Document %s not found', $id));
         }
 

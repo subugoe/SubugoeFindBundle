@@ -36,6 +36,9 @@ class SubugoeFindExtension extends Extension
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
+
+        $searchServiceConfiguration = $container->getDefinition('subugoe_find.search_service');
+        $searchServiceConfiguration->addMethodCall('setConfig', [$config]);
     }
 
     public function getAlias()

@@ -49,16 +49,18 @@ class SearchService
         RequestStack $request,
         Client $client,
         QueryService $queryService,
-        PaginatorInterface $paginator,
-        int $resultsPerPage,
-        array $snippetConfig
+        PaginatorInterface $paginator
     ) {
         $this->request = $request;
-        $this->resultsPerPage = $resultsPerPage;
         $this->client = $client;
         $this->queryService = $queryService;
         $this->paginator = $paginator;
-        $this->snippetConfig = $snippetConfig;
+    }
+
+    public function setConfig(array $config)
+    {
+        $this->resultsPerPage = $config['results_per_page'];
+        $this->snippetConfig = $config['snippet'];
     }
 
     /**
@@ -143,7 +145,7 @@ class SearchService
         $document = $this->client->select($select);
         $document = $document->getDocuments();
 
-        if (count($document) === 0) {
+        if (0 === count($document)) {
             throw new \InvalidArgumentException(sprintf('Document %s not found', $id));
         }
 
@@ -170,7 +172,7 @@ class SearchService
         $document = $this->client->select($select);
         $document = $document->getDocuments();
 
-        if (count($document) === 0) {
+        if (0 === count($document)) {
             throw new \InvalidArgumentException(sprintf('Document with field %s and value %s not found', $field,
                 $value));
         }
@@ -257,7 +259,7 @@ class SearchService
             $query = sprintf('%s:%s AND (', $pageNumber, $docId);
 
             foreach ($searchTerms as $key => $searchTerm) {
-                if ($key === 0) {
+                if (0 === $key) {
                     $query .= sprintf('%s:%s', $pageFulltext, $searchTerm);
                 } else {
                     $query .= sprintf(' OR %s:%s', $pageFulltext, $searchTerm);

@@ -14,7 +14,7 @@ class FeedController extends Controller
     /**
      * @Route("/feed/{_format}/{category}", name="_feed", defaults={"category" = ""})
      */
-    public function feedAction(string $_format, string $category): Response
+    public function feedAction(string $_format, string $category = ''): Response
     {
         $client = $this->get('solarium.client');
 
