@@ -228,7 +228,7 @@ class SearchService
 
     public function getLatestDocument(string $dateField = 'date_indexed')
     {
-        $filter = (new FilterQuery())->setQuery('-doctype:fulltext')->setKey('doctype');
+        $filter = (new FilterQuery())->setQuery('-doctype:fulltext +doctype:work')->setKey('doctype');
         $select = $this->client
             ->createSelect()
             ->setRows(1)
