@@ -188,7 +188,7 @@ class SearchService
             $docsToBeHighlighted = [];
 
             foreach ($pagination as $page) {
-                $docsToBeHighlighted[] = $page->id;
+                $docsToBeHighlighted[] = $page->getId();
             }
 
             if (strpos($searchTerms, ' ')) {
