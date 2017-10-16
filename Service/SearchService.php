@@ -136,6 +136,7 @@ class SearchService
         $select = $this->client->createSelect();
 
         $select->setQuery(sprintf('id:%s', $id));
+        $select->setFields(['*', sprintf('[child parentFilter=id:%s limit=300]', $id)]);
         $document = $this->client->select($select);
         $document = $document->getDocuments();
 
