@@ -192,10 +192,6 @@ class SearchService
                 $docsToBeHighlighted[] = $page->getId();
             }
 
-            if (strpos($searchTerms, ' ')) {
-                $searchTerms = explode(' ', trim($searchTerms));
-            }
-
             foreach ($docsToBeHighlighted as $docId) {
                 $select = $this->client->createSelect();
 
@@ -241,14 +237,18 @@ class SearchService
 
     /**
      * @param string $searchTerms
-     * @param $docId
+     * @param string $docId
      *
      * @return string
      */
-    private function getQuery(string $searchTerms, $docId): string
+    private function getQuery(string $searchTerms, string $docId): string
     {
         $pageNumber = $this->configuration['snippet']['page_number'];
         $pageFulltext = $this->configuration['snippet']['page_fulltext'];
+
+        if (strpos($searchTerms, ' ')) {
+            $searchTerms = explode(' ', trim($searchTerms));
+        }
 
         if (is_array($searchTerms) && $searchTerms !== []) {
             $query = sprintf('%s:%s AND (', $pageNumber, $docId);
