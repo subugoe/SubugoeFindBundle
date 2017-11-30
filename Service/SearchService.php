@@ -126,17 +126,12 @@ class SearchService
         return $select;
     }
 
-    /**
-     * @param string $id
-     *
-     * @return DocumentInterface
-     */
-    public function getDocumentById(string $id): DocumentInterface
+    public function getDocumentById(string $id, int $limit = 1): DocumentInterface
     {
         $select = $this->client->createSelect();
 
         $select->setQuery(sprintf('id:%s', $id));
-        $select->setFields(['*', sprintf('[child parentFilter=id:%s limit=300]', $id)]);
+        $select->setFields(['*', sprintf('[child parentFilter=id:%s limit=%d childFilter=work_id:%s]', $id, $limit, $id)]);
         $document = $this->client->select($select);
         $document = $document->getDocuments();
 
