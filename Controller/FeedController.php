@@ -26,6 +26,10 @@ class FeedController extends Controller
 
         $sort = $this->get('subugoe_find.query_service')->getSorting($this->getParameter('feed_sort'));
 
+        $workFilter = new FilterQuery();
+        $workFilter->setKey('work')->setQuery('doctype:work');
+        $select->addFilterQuery($workFilter);
+
         if (!empty($category)) {
             $categoryField = $this->getParameter('feed_category');
 

@@ -8,7 +8,7 @@
         <description>RSS-Feed</description>
         {% for feed in feeds %}
             <item>
-                <title>{{ feed.title | first }}</title>
+                <title>{% if feed.title is defined %}{{ feed.title | first }}{% endif %}</title>
                 <link>{{ feed.purl }}</link>
                 <pubDate>{{ feed.date_indexed }}</pubDate>
                 <description><![CDATA[
