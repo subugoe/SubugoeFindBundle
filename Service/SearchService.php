@@ -107,8 +107,7 @@ class SearchService
     {
         $search = $this->getSearchEntity();
         $select = $this->client->createSelect();
-        $select
-            ->setQuery($this->queryService->composeQuery($search->getQuery()));
+        $select->setQuery($this->queryService->composeQuery($search->getQuery()));
 
         return $select;
     }
@@ -128,18 +127,17 @@ class SearchService
 
     public function getDocumentById(string $id, int $limit = 1): DocumentInterface
     {
-        $select = $this->client->createSelect();
+        $query = $this->client->createSelect()
+            ->setQuery(sprintf('id:%s', $id))
+            ->setFields(['*', sprintf('[child parentFilter=id:%s limit=%d childFilter=work_id:%s]', $id, $limit, $id)]);
+        $select = $this->client->select($query);
+        $count = $select->count();
 
-        $select->setQuery(sprintf('id:%s', $id));
-        $select->setFields(['*', sprintf('[child parentFilter=id:%s limit=%d childFilter=work_id:%s]', $id, $limit, $id)]);
-        $document = $this->client->select($select);
-        $document = $document->getDocuments();
-
-        if (0 === count($document)) {
+        if (0 === $count) {
             throw new \InvalidArgumentException(sprintf('Document %s not found', $id));
         }
 
-        return $document[0];
+        return $select->getDocuments()[0];
     }
 
     /**
@@ -151,23 +149,22 @@ class SearchService
      */
     public function getDocumentBy(string $field, string $value, array $fields = []): DocumentInterface
     {
-        $select = $this->client
-            ->createSelect();
+        $query = $this->client->createSelect();
 
         if (!empty($fields)) {
-            $select->setFields($fields);
+            $query->setFields($fields);
         }
 
-        $select->setQuery(sprintf('%s:"%s"', $field, $value));
-        $document = $this->client->select($select);
-        $document = $document->getDocuments();
+        $query->setQuery(sprintf('%s:"%s"', $field, $value));
+        $select = $this->client->select($query);
+        $count = $select->count();
 
-        if (0 === count($document)) {
+        if (0 === $count) {
             throw new \InvalidArgumentException(sprintf('Document with field %s and value %s not found', $field,
                 $value));
         }
 
-        return $document[0];
+        return $select->getDocuments()[0];
     }
 
     /**
@@ -221,13 +218,19 @@ class SearchService
     public function getLatestDocument(string $dateField = 'date_indexed')
     {
         $filter = (new FilterQuery())->setQuery('-doctype:fulltext +doctype:work')->setKey('doctype');
-        $select = $this->client
+        $query = $this->client
             ->createSelect()
             ->setRows(1)
             ->addFilterQuery($filter)
             ->addSort($dateField, 'desc');
+        $select = $this->client->select($query);
+        $count = $select->count();
 
-        return $this->client->select($select)->getDocuments()[0];
+        if (0 === $count) {
+            throw new \InvalidArgumentException(sprintf('Last scanned document not found'));
+        }
+
+        return $select->getDocuments()[0];
     }
 
     /**

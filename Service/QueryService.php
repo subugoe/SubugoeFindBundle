@@ -117,7 +117,7 @@ class QueryService
      */
     public function getFacetCounter($activeFacets)
     {
-        $facetCounter = count($activeFacets);
+        $facetCounter = isset($activeFacets) ? count($activeFacets) : 0;
 
         return $facetCounter;
     }
