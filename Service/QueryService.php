@@ -90,7 +90,9 @@ class QueryService
                 ->setSort($facet['sort']);
         }
 
-        if (count($activeFacets) > 0) {
+        $activeFacetCounter = is_array($activeFacets) ? count($activeFacets) : 0;
+
+        if ($activeFacetCounter > 0) {
             foreach ($activeFacets as $activeFacet) {
                 $filterQuery = new FilterQuery();
                 foreach ($activeFacet as $itemKey => $item) {
