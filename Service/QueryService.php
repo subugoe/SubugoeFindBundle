@@ -119,7 +119,7 @@ class QueryService
      */
     public function getFacetCounter($activeFacets)
     {
-        $facetCounter = isset($activeFacets) ? count($activeFacets) : 0;
+        $facetCounter = is_array($activeFacets) ? count($activeFacets) : 0;
 
         return $facetCounter;
     }
