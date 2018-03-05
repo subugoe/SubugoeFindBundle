@@ -66,7 +66,12 @@ class SearchService
 
         $scope = $this->request->getMasterRequest()->get('scope');
         $query = $this->request->getMasterRequest()->get('search')['q'];
+
         if (!empty($query)) {
+            if (strstr($query, ':')) {
+                $query = addcslashes($query, ':');
+            }
+
             if (!empty($scope)) {
                 $search->setQuery(sprintf('%s:%s', $scope, $query));
             } else {
@@ -252,6 +257,10 @@ class SearchService
             $query = sprintf('%s:%s AND (', $pageNumber, $docId);
 
             foreach ($searchTerms as $key => $searchTerm) {
+                if (strstr($searchTerm, ':')) {
+                    $searchTerm = addcslashes($searchTerm, ':');
+                }
+
                 if (0 === $key) {
                     $query .= sprintf('%s:%s', $pageFulltext, $searchTerm);
                 } else {
@@ -261,6 +270,10 @@ class SearchService
 
             $query .= ')';
         } else {
+            if (strstr($searchTerms, ':')) {
+                $searchTerms = addcslashes($searchTerms, ':');
+            }
+
             $query = sprintf('%s:%s AND %s:%s', $pageNumber, $docId, $pageFulltext, $searchTerms);
         }
 
