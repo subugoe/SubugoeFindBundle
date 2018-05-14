@@ -2,7 +2,7 @@
 
 namespace Subugoe\FindBundle\Service;
 
-use Solarium\QueryType\Select\Query\Component\FacetSet;
+use Solarium\Component\FacetSet;
 use Solarium\QueryType\Select\Query\FilterQuery;
 use Solarium\QueryType\Select\Query\Query;
 
