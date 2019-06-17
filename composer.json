@@ -14,6 +14,6 @@
     "require": {
         "nelmio/solarium-bundle": "^2.3 || ^3.0",
         "friendsofsymfony/rest-bundle": "^2.1",
-        "knplabs/knp-paginator-bundle": "^2.5"
+        "knplabs/knp-paginator-bundle": "^2.5 || ^3.0"
     }
 }
