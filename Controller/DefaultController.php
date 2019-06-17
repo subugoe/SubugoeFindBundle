@@ -4,14 +4,39 @@ declare(strict_types=1);
 
 namespace Subugoe\FindBundle\Controller;
 
-use FOS\RestBundle\Controller\FOSRestController as Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use FOS\RestBundle\Controller\AbstractFOSRestController;
+use Solarium\Client;
+use Subugoe\FindBundle\Service\QueryService;
+use Subugoe\FindBundle\Service\SearchService;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class DefaultController extends Controller
+class DefaultController extends AbstractFOSRestController
 {
+    /**
+     * @var Client
+     */
+    private $client;
+
+    /**
+     * @var QueryService
+     */
+    private $queryService;
+
+    /**
+     * @var SearchService
+     */
+    private $searchService;
+
+    public function __construct(Client $client, QueryService $queryService, SearchService $searchService)
+    {
+        $this->client = $client;
+        $this->queryService = $queryService;
+        $this->searchService = $searchService;
+    }
+
     /**
      * @Route("/", name="_homepage")
      *
@@ -21,18 +46,15 @@ class DefaultController extends Controller
      */
     public function indexAction(Request $request): Response
     {
-        $searchService = $this->get('subugoe_find.search_service');
-        $queryService = $this->get('subugoe_find.query_service');
-
-        $search = $searchService->getSearchEntity();
-        $select = $searchService->getQuerySelect();
-        $queryService->addQuerySort($select);
+        $search = $this->searchService->getSearchEntity();
+        $select = $this->searchService->getQuerySelect();
+        $this->queryService->addQuerySort($select);
         $activeFacets = $request->get('filter');
-        $queryService->addQueryFilters($select, $activeFacets);
-        $pagination = $searchService->getPagination($select);
+        $this->queryService->addQueryFilters($select, $activeFacets);
+        $pagination = $this->searchService->getPagination($select);
 
-        $facets = $this->get('solarium.client')->select($select)->getFacetSet()->getFacets();
-        $facetCounter = $this->get('subugoe_find.query_service')->getFacetCounter($activeFacets);
+        $facets = $this->client->select($select)->getFacetSet()->getFacets();
+        $facetCounter = $this->queryService->getFacetCounter($activeFacets);
 
         return $this->render('SubugoeFindBundle:Default:index.html.twig', [
                     'facets' => $facets,
@@ -52,10 +74,9 @@ class DefaultController extends Controller
      */
     public function detailAction(string $id, Request $request): Response
     {
-        $client = $this->get('solarium.client');
-        $select = $client->createSelect();
+        $select = $this->client->createSelect();
         $select->setQuery(sprintf('id:%s', $id));
-        $document = $client->select($select);
+        $document = $this->client->select($select);
         $document = $document->getDocuments();
         if (0 === count($document)) {
             throw new NotFoundHttpException(sprintf('Document %s not found', $id));

@@ -8,11 +8,13 @@ services:
 
     default_controller:
         class: Subugoe\FindBundle\Controller\DefaultController
-        arguments: ["@subugoe_find.query_service"]
+        autowire: true
+        autoconfigure: true
 
     subugoe_find.search_service:
       class: Subugoe\FindBundle\Service\SearchService
-      arguments: ["@request_stack", "@solarium.client", "@subugoe_find.query_service", "@knp_paginator"]
+      autowire: true
+      autoconfigure: true
 
     Subugoe\FindBundle\Service\SearchService:
       alias: subugoe_find.search_service
