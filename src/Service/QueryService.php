@@ -11,13 +11,13 @@ use Solarium\QueryType\Select\Query\Query;
  */
 class QueryService
 {
-    protected $defaultQuery;
+    private $defaultQuery;
 
-    protected $defaultSort;
+    private $defaultSort;
 
-    protected $hidden;
+    private $hidden;
 
-    protected $facets;
+    private $facets;
 
     public function __construct($defaultQuery, $defaultSort, $hidden, $facets)
     {
@@ -30,11 +30,9 @@ class QueryService
     /**
      * Returns the sorting part of the query.
      *
-     * @param string $sortString
-     *
      * @return array $sort
      */
-    public function getSorting($sortString = '')
+    public function getSorting(string $sortString = ''): array
     {
         if (empty($sortString)) {
             $sortString = $this->defaultSort;
@@ -47,12 +45,7 @@ class QueryService
         return $sort;
     }
 
-    /**
-     * @param string $query
-     *
-     * @return string $queryString
-     */
-    public function composeQuery($query)
+    public function composeQuery(string $query): string
     {
         $queryComposer = [];
         $queryComposer[] = $this->defaultQuery;
@@ -64,18 +57,10 @@ class QueryService
             $queryComposer[] = '!'.$hiddenDocument['field'].':'.$hiddenDocument['value'];
         }
 
-        $queryString = implode(' AND ', $queryComposer);
-
-        return $queryString;
+        return implode(' AND ', $queryComposer);
     }
 
-    /**
-     * @param FacetSet $facetSet
-     * @param array    $activeFacets
-     *
-     * @return array
-     */
-    public function addFacets(FacetSet $facetSet, $activeFacets)
+    public function addFacets(FacetSet $facetSet, ?array $activeFacets): array
     {
         $facetConfiguration = $this->facets;
 
@@ -98,7 +83,7 @@ class QueryService
                 foreach ($activeFacet as $itemKey => $item) {
                     $filterQuery->setKey($itemKey.$this->getFacetCounter($activeFacets).md5(microtime()));
 
-                    if (preg_match('/\[[a-zA-Z0-9_]* TO [a-zA-Z0-9_]*\]/', $item)) {
+                    if (preg_match('/\[\w* TO \w*\]/', $item)) {
                         $filterQuery->setQuery(vsprintf('%s:%s', [$itemKey, $item]));
                     } else {
                         $filterQuery->setQuery(vsprintf('%s:"%s"', [$itemKey, $item]));
@@ -112,39 +97,21 @@ class QueryService
         return $filterQueries;
     }
 
-    /**
-     * @param array $activeFacets
-     *
-     * @return int
-     */
-    public function getFacetCounter($activeFacets)
+    public function getFacetCounter(?array $activeFacets): int
     {
-        $facetCounter = is_array($activeFacets) ? count($activeFacets) : 0;
-
-        return $facetCounter;
+        return is_array($activeFacets) ? count($activeFacets) : 0;
     }
 
-    /*
-     * @param Query $select A Query instance
-     */
-    public function addQuerySort(Query $select, $sort = '', $order = '')
+    public function addQuerySort(Query $select, string $sort = '', string $order = '')
     {
-        if (!empty($sort) && !empty($order)) {
-            $sort = $this->getSorting($sort.' '.$order);
-        } else {
-            $sort = $this->getSorting();
-        }
+        $sort = !empty($sort) && !empty($order) ? $this->getSorting($sort.' '.$order) : $this->getSorting();
 
         if (is_array($sort) && $sort != []) {
             $select->addSort($sort[0], $sort[1]);
         }
     }
 
-    /*
-     * @param Query $select A Query instance
-     * @param array $activeFacets Array of active facets
-     */
-    public function addQueryFilters(Query $select, $activeFacets)
+    public function addQueryFilters(Query $select, ?array $activeFacets)
     {
         $facetSet = $select->getFacetSet();
         $filters = $this->addFacets($facetSet, $activeFacets);

@@ -7,100 +7,53 @@ namespace Subugoe\FindBundle\Entity;
  */
 class Search
 {
-    /**
-     * @var string
-     */
-    protected $query;
+    protected string $query;
+    protected int $offset;
+    protected int $rows;
+    protected int $currentPage;
 
-    /**
-     * @var int
-     */
-    protected $offset;
-
-    /**
-     * @var int
-     */
-    protected $rows;
-
-    /**
-     * @var int
-     */
-    protected $currentPage;
-
-    /**
-     * @return string
-     */
-    public function getQuery()
+    public function getQuery(): string
     {
         return $this->query;
     }
 
-    /**
-     * @param string $query
-     *
-     * @return Search
-     */
-    public function setQuery($query)
+    public function setQuery(string $query): self
     {
         $this->query = $query;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getOffset()
+    public function getOffset(): int
     {
         return ($this->getCurrentPage() - 1) * $this->getRows();
     }
 
-    /**
-     * @param int $offset
-     *
-     * @return Search
-     */
-    public function setOffset($offset)
+    public function setOffset(int $offset): self
     {
         $this->offset = $offset;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getRows()
+    public function getRows(): int
     {
         return $this->rows;
     }
 
-    /**
-     * @param int $rows
-     *
-     * @return Search
-     */
-    public function setRows($rows)
+    public function setRows(int $rows): self
     {
         $this->rows = $rows;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getCurrentPage()
+    public function getCurrentPage(): int
     {
         return $this->currentPage;
     }
 
-    /**
-     * @param int $currentPage
-     *
-     * @return Search
-     */
-    public function setCurrentPage($currentPage)
+    public function setCurrentPage(int $currentPage): self
     {
         $this->currentPage = $currentPage;
 

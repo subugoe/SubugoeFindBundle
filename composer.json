@@ -12,8 +12,8 @@
        "psr-4": { "Subugoe\\FindBundle\\": "src/" }
     },
     "require": {
-        "nelmio/solarium-bundle": "^2.3 || ^3.0",
-        "friendsofsymfony/rest-bundle": "^2.1",
-        "knplabs/knp-paginator-bundle": "^3.0 || ^4.0 || ^5.0"
+        "php": ">=7.4.0",
+        "nelmio/solarium-bundle": "^3.0",
+        "knplabs/knp-paginator-bundle": "^4.0 || ^5.0"
     }
 }

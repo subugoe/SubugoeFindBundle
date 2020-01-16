@@ -15,30 +15,11 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class SearchService
 {
-    /**
-     * @var RequestStack
-     */
-    private $request;
-
-    /**
-     * @var Client
-     */
-    private $client;
-
-    /**
-     * @var QueryService
-     */
-    private $queryService;
-
-    /**
-     * @var PaginatorInterface
-     */
-    private $paginator;
-
-    /**
-     * @var array
-     */
-    private $configuration;
+    private RequestStack $request;
+    private Client $client;
+    private QueryService $queryService;
+    private PaginatorInterface $paginator;
+    private array $configuration;
 
     public function __construct(
         RequestStack $request,
@@ -57,9 +38,6 @@ class SearchService
         $this->configuration = $config;
     }
 
-    /**
-     * @return Search
-     */
     public function getSearchEntity(): Search
     {
         $search = new Search();
@@ -93,7 +71,7 @@ class SearchService
      */
     public function getPagination(Query $select): PaginationInterface
     {
-        $pagination = $this->paginator->paginate(
+        return $this->paginator->paginate(
             [
                 $this->client,
                 $select,
@@ -101,13 +79,8 @@ class SearchService
             $this->getSearchEntity()->getCurrentPage(),
             $this->getSearchEntity()->getRows()
         );
-
-        return $pagination;
     }
 
-    /**
-     * @return Query $select A Query instance
-     */
     public function getQuerySelect(): Query
     {
         $search = $this->getSearchEntity();
@@ -117,12 +90,6 @@ class SearchService
         return $select;
     }
 
-    /**
-     * @param Query  $select
-     * @param string $field
-     *
-     * @return Query
-     */
     public function addHighlighting(Query $select, string $field): Query
     {
         $select->getHighlighting()->addField($field);
@@ -146,11 +113,7 @@ class SearchService
     }
 
     /**
-     * @param string $field
-     * @param string $value
-     * @param array  $fields a list of fields, i.e. ['id', 'title']
-     *
-     * @return \Solarium\QueryType\Select\Result\DocumentInterface
+     * @param array $fields a list of fields, i.e. ['id', 'title']
      */
     public function getDocumentBy(string $field, string $value, array $fields = []): DocumentInterface
     {
@@ -165,19 +128,12 @@ class SearchService
         $count = $select->count();
 
         if (0 === $count) {
-            throw new \InvalidArgumentException(sprintf('Document with field %s and value %s not found', $field,
-                $value));
+            throw new \InvalidArgumentException(sprintf('Document with field %s and value %s not found', $field, $value));
         }
 
         return $select->getDocuments()[0];
     }
 
-    /**
-     * @param PaginationInterface $pagination
-     * @param string              $searchTerms
-     *
-     * @return array $highlights
-     */
     public function getHighlights(PaginationInterface $pagination, string $searchTerms): array
     {
         $highlights = [];
@@ -220,7 +176,7 @@ class SearchService
         return $highlights;
     }
 
-    public function getLatestDocument(string $dateField = 'date_indexed')
+    public function getLatestDocument(string $dateField = 'date_indexed'): DocumentInterface
     {
         $filter = (new FilterQuery())->setQuery('-doctype:fulltext +doctype:work')->setKey('doctype');
         $query = $this->client
@@ -238,12 +194,6 @@ class SearchService
         return $select->getDocuments()[0];
     }
 
-    /**
-     * @param string $searchTerms
-     * @param string $docId
-     *
-     * @return string
-     */
     private function getQuery(string $searchTerms, string $docId): string
     {
         $pageNumber = $this->configuration['snippet']['page_number'];

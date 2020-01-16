@@ -4,31 +4,21 @@ declare(strict_types=1);
 
 namespace Subugoe\FindBundle\Controller;
 
-use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Solarium\Client;
+use Subugoe\FindBundle\Entity\Search;
 use Subugoe\FindBundle\Service\QueryService;
 use Subugoe\FindBundle\Service\SearchService;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Annotation\Route;
 
-class DefaultController extends AbstractFOSRestController
+class DefaultController extends AbstractController
 {
-    /**
-     * @var Client
-     */
-    private $client;
-
-    /**
-     * @var QueryService
-     */
-    private $queryService;
-
-    /**
-     * @var SearchService
-     */
-    private $searchService;
+    private Client $client;
+    private QueryService $queryService;
+    private Search $searchService;
 
     public function __construct(Client $client, QueryService $queryService, SearchService $searchService)
     {
@@ -41,8 +31,6 @@ class DefaultController extends AbstractFOSRestController
      * @Route("/", name="_homepage")
      *
      * @param Request $request A request instance
-     *
-     * @return Response
      */
     public function indexAction(Request $request): Response
     {
@@ -56,21 +44,19 @@ class DefaultController extends AbstractFOSRestController
         $facets = $this->client->select($select)->getFacetSet()->getFacets();
         $facetCounter = $this->queryService->getFacetCounter($activeFacets);
 
-        return $this->render('SubugoeFindBundle:Default:index.html.twig', [
-                    'facets' => $facets,
-                    'facetCounter' => $facetCounter,
-                    'queryParams' => $request->get('filter') ?: [],
-                    'search' => $search,
-                    'pagination' => $pagination,
-                ]);
+        return $this->render('@SubugoeFind/Default/index.html.twig', [
+            'facets' => $facets,
+            'facetCounter' => $facetCounter,
+            'queryParams' => $request->get('filter') ?: [],
+            'search' => $search,
+            'pagination' => $pagination,
+        ]);
     }
 
     /**
      * @Route("/id/{id}", name="_detail")
      *
      * @param string $id The document id
-     *
-     * @return Response
      */
     public function detailAction(string $id, Request $request): Response
     {
@@ -82,6 +68,6 @@ class DefaultController extends AbstractFOSRestController
             throw new NotFoundHttpException(sprintf('Document %s not found', $id));
         }
 
-        return $this->render('SubugoeFindBundle:Default:detail.html.twig', ['document' => $document[0]->getFields()]);
+        return $this->render('@SubugoeFind/Default/detail.html.twig', ['document' => $document[0]->getFields()]);
     }
 }

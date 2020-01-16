@@ -13,15 +13,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class FeedController extends AbstractController
 {
-    /**
-     * @var Client
-     */
-    private $client;
-
-    /**
-     * @var QueryService
-     */
-    private $queryService;
+    private Client $client;
+    private QueryService $queryService;
 
     public function __construct(Client $client, QueryService $queryService)
     {
@@ -61,7 +54,7 @@ class FeedController extends AbstractController
         }
 
         $feeds = $this->client->select($select);
-        $template = sprintf('SubugoeFindBundle:Default:feed.%s.twig', $_format);
+        $template = sprintf('@SubugoeFind/Default/feed.%s.twig', $_format);
 
         return $this->render($template, [
             'feeds' => $feeds,
