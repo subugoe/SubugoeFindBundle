@@ -97,7 +97,7 @@ class SearchService
         return $select;
     }
 
-    public function getDocumentById(string $id, int $limit = 1): DocumentInterface
+    public function getDocumentById(string $id, ?int $limit = 1): DocumentInterface
     {
         $query = $this->client->createSelect()
             ->setQuery(sprintf('id:%s', $id))
@@ -115,7 +115,7 @@ class SearchService
     /**
      * @param array $fields a list of fields, i.e. ['id', 'title']
      */
-    public function getDocumentBy(string $field, string $value, array $fields = []): DocumentInterface
+    public function getDocumentBy(string $field, string $value, ?array $fields = []): DocumentInterface
     {
         $query = $this->client->createSelect();
 
@@ -176,7 +176,7 @@ class SearchService
         return $highlights;
     }
 
-    public function getLatestDocument(string $dateField = 'date_indexed'): DocumentInterface
+    public function getLatestDocument(?string $dateField = 'date_indexed'): DocumentInterface
     {
         $filter = (new FilterQuery())->setQuery('-doctype:fulltext +doctype:work')->setKey('doctype');
         $query = $this->client

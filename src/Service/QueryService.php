@@ -32,7 +32,7 @@ class QueryService
      *
      * @return array $sort
      */
-    public function getSorting(string $sortString = ''): array
+    public function getSorting(?string $sortString = ''): array
     {
         if (empty($sortString)) {
             $sortString = $this->defaultSort;
@@ -102,7 +102,7 @@ class QueryService
         return is_array($activeFacets) ? count($activeFacets) : 0;
     }
 
-    public function addQuerySort(Query $select, string $sort = '', string $order = '')
+    public function addQuerySort(Query $select, ?string $sort = '', ?string $order = '')
     {
         $sort = !empty($sort) && !empty($order) ? $this->getSorting($sort.' '.$order) : $this->getSorting();
 
