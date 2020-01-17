@@ -7,17 +7,17 @@ namespace Subugoe\FindBundle\Entity;
  */
 class Search
 {
-    protected string $query;
+    protected $query;
     protected int $offset;
     protected int $rows;
     protected int $currentPage;
 
-    public function getQuery(): string
+    public function getQuery(): ?string
     {
         return $this->query;
     }
 
-    public function setQuery(string $query): self
+    public function setQuery(?string $query): self
     {
         $this->query = $query;
 

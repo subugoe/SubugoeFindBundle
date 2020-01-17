@@ -43,7 +43,7 @@ class SearchService
         $search = new Search();
 
         $scope = $this->request->getMasterRequest()->get('scope');
-        $query = $this->request->getMasterRequest()->get('search')['q'];
+        $query = $this->request->getMasterRequest()->get('search')['q'] ?? '';
 
         if (!empty($query)) {
             if (strstr($query, ':')) {
