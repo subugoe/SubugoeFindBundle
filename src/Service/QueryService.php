@@ -15,9 +15,9 @@ class QueryService
 
     private $defaultSort;
 
-    private $hidden;
-
     private $facets;
+
+    private $hidden;
 
     public function __construct($defaultQuery, $defaultSort, $hidden, $facets)
     {
@@ -25,39 +25,6 @@ class QueryService
         $this->defaultSort = $defaultSort;
         $this->hidden = $hidden;
         $this->facets = $facets;
-    }
-
-    /**
-     * Returns the sorting part of the query.
-     *
-     * @return array $sort
-     */
-    public function getSorting(?string $sortString = ''): array
-    {
-        if (empty($sortString)) {
-            $sortString = $this->defaultSort;
-        }
-        $sort = [];
-        if (preg_match('/\s/', $sortString)) {
-            $sort = explode(' ', $sortString);
-        }
-
-        return $sort;
-    }
-
-    public function composeQuery(string $query): string
-    {
-        $queryComposer = [];
-        $queryComposer[] = $this->defaultQuery;
-        if (!empty($query)) {
-            $queryComposer[] = $query;
-        }
-        $hiddenDocuments = $this->hidden;
-        foreach ($hiddenDocuments as $hiddenDocument) {
-            $queryComposer[] = '!'.$hiddenDocument['field'].':'.$hiddenDocument['value'];
-        }
-
-        return implode(' AND ', $queryComposer);
     }
 
     public function addFacets(FacetSet $facetSet, ?array $activeFacets): array
@@ -97,20 +64,6 @@ class QueryService
         return $filterQueries;
     }
 
-    public function getFacetCounter(?array $activeFacets): int
-    {
-        return is_array($activeFacets) ? count($activeFacets) : 0;
-    }
-
-    public function addQuerySort(Query $select, ?string $sort = '', ?string $order = '')
-    {
-        $sort = !empty($sort) && !empty($order) ? $this->getSorting($sort.' '.$order) : $this->getSorting();
-
-        if (is_array($sort) && $sort != []) {
-            $select->addSort($sort[0], $sort[1]);
-        }
-    }
-
     public function addQueryFilters(Query $select, ?array $activeFacets)
     {
         $facetSet = $select->getFacetSet();
@@ -118,5 +71,50 @@ class QueryService
         foreach ($filters as $filter) {
             $select->addFilterQuery($filter);
         }
+    }
+
+    public function addQuerySort(Query $select, ?string $sort = '', ?string $order = '')
+    {
+        $sortArray = !empty($sort) && !empty($order) ? $this->getSorting($sort.' '.$order) : $this->getSorting();
+
+        if (is_array($sortArray) && $sortArray != []) {
+            $select->addSort($sortArray[0], $sortArray[1]);
+        }
+    }
+
+    public function composeQuery(?string $query): string
+    {
+        $queryComposer = [];
+        $queryComposer[] = $this->defaultQuery;
+        if (!empty($query)) {
+            $queryComposer[] = $query;
+        }
+        $hiddenDocuments = $this->hidden;
+        foreach ($hiddenDocuments as $hiddenDocument) {
+            $queryComposer[] = '!'.$hiddenDocument['field'].':'.$hiddenDocument['value'];
+        }
+
+        return implode(' AND ', $queryComposer);
+    }
+
+    public function getFacetCounter(?array $activeFacets): int
+    {
+        return is_array($activeFacets) ? count($activeFacets) : 0;
+    }
+
+    /**
+     * Returns the sorting part of the query.
+     */
+    public function getSorting(?string $sortString = ''): array
+    {
+        if (empty($sortString)) {
+            $sortString = $this->defaultSort;
+        }
+        $sort = [];
+        if (preg_match('/\s/', $sortString)) {
+            $sort = explode(' ', $sortString);
+        }
+
+        return $sort;
     }
 }

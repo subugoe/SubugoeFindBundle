@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Subugoe\FindBundle\Controller;
 
 use Solarium\Client;
-use Subugoe\FindBundle\Entity\Search;
 use Subugoe\FindBundle\Service\QueryService;
 use Subugoe\FindBundle\Service\SearchService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,13 +17,31 @@ class DefaultController extends AbstractController
 {
     private Client $client;
     private QueryService $queryService;
-    private Search $searchService;
+    private SearchService $searchService;
 
     public function __construct(Client $client, QueryService $queryService, SearchService $searchService)
     {
         $this->client = $client;
         $this->queryService = $queryService;
         $this->searchService = $searchService;
+    }
+
+    /**
+     * @Route("/id/{id}", name="_detail")
+     *
+     * @param string $id The document id
+     */
+    public function detailAction(string $id, Request $request): Response
+    {
+        $select = $this->client->createSelect();
+        $select->setQuery(sprintf('id:%s', $id));
+        $document = $this->client->select($select);
+        $document = $document->getDocuments();
+        if (0 === count($document)) {
+            throw new NotFoundHttpException(sprintf('Document %s not found', $id));
+        }
+
+        return $this->render('@SubugoeFind/Default/detail.html.twig', ['document' => $document[0]->getFields()]);
     }
 
     /**
@@ -51,23 +68,5 @@ class DefaultController extends AbstractController
             'search' => $search,
             'pagination' => $pagination,
         ]);
-    }
-
-    /**
-     * @Route("/id/{id}", name="_detail")
-     *
-     * @param string $id The document id
-     */
-    public function detailAction(string $id, Request $request): Response
-    {
-        $select = $this->client->createSelect();
-        $select->setQuery(sprintf('id:%s', $id));
-        $document = $this->client->select($select);
-        $document = $document->getDocuments();
-        if (0 === count($document)) {
-            throw new NotFoundHttpException(sprintf('Document %s not found', $id));
-        }
-
-        return $this->render('@SubugoeFind/Default/detail.html.twig', ['document' => $document[0]->getFields()]);
     }
 }

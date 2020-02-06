@@ -7,26 +7,36 @@ namespace Subugoe\FindBundle\Entity;
  */
 class Search
 {
-    protected $query;
-    protected int $offset;
-    protected int $rows;
     protected int $currentPage;
+    protected int $offset;
+    protected $query;
+    protected int $rows;
+
+    public function getCurrentPage(): int
+    {
+        return $this->currentPage;
+    }
+
+    public function getOffset(): int
+    {
+        return ($this->getCurrentPage() - 1) * $this->getRows();
+    }
 
     public function getQuery(): ?string
     {
         return $this->query;
     }
 
-    public function setQuery(?string $query): self
+    public function getRows(): int
     {
-        $this->query = $query;
-
-        return $this;
+        return $this->rows;
     }
 
-    public function getOffset(): int
+    public function setCurrentPage(int $currentPage): self
     {
-        return ($this->getCurrentPage() - 1) * $this->getRows();
+        $this->currentPage = $currentPage;
+
+        return $this;
     }
 
     public function setOffset(int $offset): self
@@ -36,26 +46,16 @@ class Search
         return $this;
     }
 
-    public function getRows(): int
+    public function setQuery(?string $query): self
     {
-        return $this->rows;
+        $this->query = $query;
+
+        return $this;
     }
 
     public function setRows(int $rows): self
     {
         $this->rows = $rows;
-
-        return $this;
-    }
-
-    public function getCurrentPage(): int
-    {
-        return $this->currentPage;
-    }
-
-    public function setCurrentPage(int $currentPage): self
-    {
-        $this->currentPage = $currentPage;
 
         return $this;
     }

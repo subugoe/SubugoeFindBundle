@@ -15,11 +15,11 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class SearchService
 {
-    private RequestStack $request;
     private Client $client;
-    private QueryService $queryService;
-    private PaginatorInterface $paginator;
     private array $configuration;
+    private PaginatorInterface $paginator;
+    private QueryService $queryService;
+    private RequestStack $request;
 
     public function __construct(
         RequestStack $request,
@@ -33,83 +33,11 @@ class SearchService
         $this->paginator = $paginator;
     }
 
-    public function setConfig(array $config)
-    {
-        $this->configuration = $config;
-    }
-
-    public function getSearchEntity(): Search
-    {
-        $search = new Search();
-
-        $scope = $this->request->getMasterRequest()->get('scope');
-        $query = $this->request->getMasterRequest()->get('search')['q'] ?? '';
-
-        if (!empty($query)) {
-            if (strstr($query, ':')) {
-                $query = addcslashes($query, ':');
-            }
-
-            if (!empty($scope)) {
-                $search->setQuery(sprintf('%s:%s', $scope, $query));
-            } else {
-                $search->setQuery(sprintf('%s:%s', $this->request->getMasterRequest()->get('search')['searchType'],
-                    $query));
-            }
-        }
-        $search
-            ->setRows((int) $this->configuration['results_per_page'])
-            ->setCurrentPage((int) $this->request->getMasterRequest()->get('page') ?: 1);
-
-        return $search;
-    }
-
-    /**
-     * @param Query $select A Query instance
-     *
-     * @return array $pagination A selected set of pages
-     */
-    public function getPagination(Query $select): PaginationInterface
-    {
-        return $this->paginator->paginate(
-            [
-                $this->client,
-                $select,
-            ],
-            $this->getSearchEntity()->getCurrentPage(),
-            $this->getSearchEntity()->getRows()
-        );
-    }
-
-    public function getQuerySelect(): Query
-    {
-        $search = $this->getSearchEntity();
-        $select = $this->client->createSelect();
-        $select->setQuery($this->queryService->composeQuery($search->getQuery()));
-
-        return $select;
-    }
-
     public function addHighlighting(Query $select, string $field): Query
     {
         $select->getHighlighting()->addField($field);
 
         return $select;
-    }
-
-    public function getDocumentById(string $id, ?int $limit = 1): DocumentInterface
-    {
-        $query = $this->client->createSelect()
-            ->setQuery(sprintf('id:%s', $id))
-            ->setFields(['*', sprintf('[child parentFilter=id:%s limit=%d childFilter=work_id:%s]', $id, $limit, $id)]);
-        $select = $this->client->select($query);
-        $count = $select->count();
-
-        if (0 === $count) {
-            throw new \InvalidArgumentException(sprintf('Document %s not found', $id));
-        }
-
-        return $select->getDocuments()[0];
     }
 
     /**
@@ -129,6 +57,21 @@ class SearchService
 
         if (0 === $count) {
             throw new \InvalidArgumentException(sprintf('Document with field %s and value %s not found', $field, $value));
+        }
+
+        return $select->getDocuments()[0];
+    }
+
+    public function getDocumentById(string $id, ?int $limit = 1): DocumentInterface
+    {
+        $query = $this->client->createSelect()
+            ->setQuery(sprintf('id:%s', $id))
+            ->setFields(['*', sprintf('[child parentFilter=id:%s limit=%d childFilter=work_id:%s]', $id, $limit, $id)]);
+        $select = $this->client->select($query);
+        $count = $select->count();
+
+        if (0 === $count) {
+            throw new \InvalidArgumentException(sprintf('Document %s not found', $id));
         }
 
         return $select->getDocuments()[0];
@@ -194,6 +137,63 @@ class SearchService
         return $select->getDocuments()[0];
     }
 
+    /**
+     * @param Query $select A Query instance
+     *
+     * @return PaginationInterface $pagination A selected set of pages
+     */
+    public function getPagination(Query $select): PaginationInterface
+    {
+        return $this->paginator->paginate(
+            [
+                $this->client,
+                $select,
+            ],
+            $this->getSearchEntity()->getCurrentPage(),
+            $this->getSearchEntity()->getRows()
+        );
+    }
+
+    public function getQuerySelect(): Query
+    {
+        $search = $this->getSearchEntity();
+        $select = $this->client->createSelect();
+        $select->setQuery($this->queryService->composeQuery($search->getQuery()));
+
+        return $select;
+    }
+
+    public function getSearchEntity(): Search
+    {
+        $search = new Search();
+
+        $scope = $this->request->getMasterRequest()->get('scope');
+        $query = $this->request->getMasterRequest()->get('search')['q'] ?? '';
+
+        if (!empty($query)) {
+            if (false !== strpos($query, ':')) {
+                $query = addcslashes($query, ':');
+            }
+
+            if (!empty($scope)) {
+                $search->setQuery(sprintf('%s:%s', $scope, $query));
+            } else {
+                $search->setQuery(sprintf('%s:%s', $this->request->getMasterRequest()->get('search')['searchType'],
+                    $query));
+            }
+        }
+        $search
+            ->setRows((int) $this->configuration['results_per_page'])
+            ->setCurrentPage((int) $this->request->getMasterRequest()->get('page') ?: 1);
+
+        return $search;
+    }
+
+    public function setConfig(array $config)
+    {
+        $this->configuration = $config;
+    }
+
     private function getQuery(string $searchTerms, string $docId): string
     {
         $pageNumber = $this->configuration['snippet']['page_number'];
@@ -220,7 +220,7 @@ class SearchService
 
             $query .= ')';
         } else {
-            if (strstr($searchTerms, ':')) {
+            if (false !== strpos($searchTerms, ':')) {
                 $searchTerms = addcslashes($searchTerms, ':');
             }
 

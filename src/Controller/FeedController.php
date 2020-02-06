@@ -49,7 +49,7 @@ class FeedController extends AbstractController
             $select->addFilterQuery($categoryFilter);
         }
 
-        if (is_array($sort) && $sort != []) {
+        if (is_array($sort) && $sort !== []) {
             $select->addSort($sort[0], $sort[1]);
         }
 
