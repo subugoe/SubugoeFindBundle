@@ -9,7 +9,7 @@ class Search
 {
     protected int $currentPage;
     protected int $offset;
-    protected ?string $query;
+    protected ?string $query = '';
     protected int $rows;
 
     public function getCurrentPage(): int
