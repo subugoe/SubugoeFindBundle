@@ -9,7 +9,7 @@ use Knp\Component\Pager\PaginatorInterface;
 use Solarium\Client;
 use Solarium\QueryType\Select\Query\FilterQuery;
 use Solarium\QueryType\Select\Query\Query;
-use Solarium\QueryType\Select\Result\DocumentInterface;
+use Solarium\Core\Query\DocumentInterface;
 use Subugoe\FindBundle\Entity\Search;
 use Symfony\Component\HttpFoundation\RequestStack;
 
