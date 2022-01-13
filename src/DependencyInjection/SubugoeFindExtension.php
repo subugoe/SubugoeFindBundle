@@ -14,6 +14,11 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
  */
 class SubugoeFindExtension extends Extension
 {
+    public function getAlias(): string
+    {
+        return 'subugoe_find';
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -39,10 +44,5 @@ class SubugoeFindExtension extends Extension
 
         $searchServiceConfiguration = $container->getDefinition('subugoe_find.search_service');
         $searchServiceConfiguration->addMethodCall('setConfig', [$config]);
-    }
-
-    public function getAlias()
-    {
-        return 'subugoe_find';
     }
 }

@@ -9,17 +9,17 @@ use Solarium\QueryType\Select\Query\Query;
 /**
  * Services for query manipulation and extraction.
  */
-class QueryService
+class QueryService implements QueryServiceInterface
 {
-    private $defaultQuery;
+    private string $defaultQuery;
 
-    private $defaultSort;
+    private string $defaultSort;
 
-    private $facets;
+    private array $facets;
 
-    private $hidden;
+    private array $hidden;
 
-    public function __construct($defaultQuery, $defaultSort, $hidden, $facets)
+    public function __construct(string $defaultQuery, string $defaultSort, array $hidden, array $facets)
     {
         $this->defaultQuery = $defaultQuery;
         $this->defaultSort = $defaultSort;
@@ -77,7 +77,7 @@ class QueryService
     {
         $sortArray = !empty($sort) && !empty($order) ? $this->getSorting($sort.' '.$order) : $this->getSorting();
 
-        if (is_array($sortArray) && $sortArray != []) {
+        if (is_array($sortArray) && [] != $sortArray) {
             $select->addSort($sortArray[0], $sortArray[1]);
         }
     }

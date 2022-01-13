@@ -10,12 +10,14 @@ use Subugoe\FindBundle\Service\QueryService;
  */
 class QueryServiceTest extends TestCase
 {
-    /**
-     * @var QueryService
-     */
-    protected $fixture;
+    protected QueryService $fixture;
 
-    public function sortingProvider()
+    public function setUp(): void
+    {
+        $this->fixture = new QueryService('a', 'b', (array) 'c', (array) 'd');
+    }
+
+    public function sortingProvider(): array
     {
         return [
             [
@@ -27,21 +29,16 @@ class QueryServiceTest extends TestCase
         ];
     }
 
-    public function setUp()
-    {
-        $this->fixture = new QueryService('a', 'b', 'c', 'd');
-    }
-
-    public function testSortingReturnsAnEmptyArrayWhenThereIsNoWhitespaceInTheString()
-    {
-        $this->assertSameSize([], $this->fixture->getSorting());
-    }
-
     /**
      * @dataProvider sortingProvider
      */
-    public function testSortingReturnsAnArrayWithTheCorrectNumberOfElements($sortString, $count)
+    public function testSortingReturnsAnArrayWithTheCorrectNumberOfElements($sortString, $count): void
     {
-        $this->assertSame($count, count($this->fixture->getSorting($sortString)));
+        $this->assertCount($count, $this->fixture->getSorting($sortString));
+    }
+
+    public function testSortingReturnsAnEmptyArrayWhenThereIsNoWhitespaceInTheString(): void
+    {
+        $this->assertSameSize([], $this->fixture->getSorting());
     }
 }

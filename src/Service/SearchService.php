@@ -7,13 +7,13 @@ namespace Subugoe\FindBundle\Service;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Solarium\Client;
+use Solarium\Core\Query\DocumentInterface;
 use Solarium\QueryType\Select\Query\FilterQuery;
 use Solarium\QueryType\Select\Query\Query;
-use Solarium\Core\Query\DocumentInterface;
 use Subugoe\FindBundle\Entity\Search;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class SearchService
+class SearchService implements SearchServiceInterface
 {
     private Client $client;
     private array $configuration;
@@ -81,7 +81,7 @@ class SearchService
     {
         $highlights = [];
 
-        if ($pagination !== [] && !empty($searchTerms)) {
+        if ([] !== $pagination && !empty($searchTerms)) {
             $docsToBeHighlighted = [];
 
             foreach ($pagination as $page) {
@@ -203,11 +203,11 @@ class SearchService
             $searchTerms = explode(' ', trim($searchTerms));
         }
 
-        if (is_array($searchTerms) && $searchTerms !== []) {
+        if (is_array($searchTerms) && [] !== $searchTerms) {
             $query = sprintf('%s:%s AND (', $pageNumber, $docId);
 
             foreach ($searchTerms as $key => $searchTerm) {
-                if (strstr($searchTerm, ':')) {
+                if (str_contains($searchTerm, ':')) {
                     $searchTerm = addcslashes($searchTerm, ':');
                 }
 

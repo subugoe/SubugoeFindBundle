@@ -12,8 +12,12 @@
        "psr-4": { "Subugoe\\FindBundle\\": "src/" }
     },
     "require": {
-        "php": ">=7.4.0",
+        "php": "^8.0",
         "nelmio/solarium-bundle": "^4.0 || ^5.0",
         "knplabs/knp-paginator-bundle": "^4.0 || ^5.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5",
+        "friendsofphp/php-cs-fixer": "^3.4"
     }
 }

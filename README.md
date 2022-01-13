@@ -11,6 +11,6 @@ A FindBundle installed by composer in vendor/subugoe needs to be removed.
 
 ## Requirements
 
-* Symfony >= 4.0
+* Symfony 5.x/6.0
 * knplabs paginator
 * nelmio solariumbundle

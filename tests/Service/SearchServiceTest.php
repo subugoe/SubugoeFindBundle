@@ -21,11 +21,11 @@ class SearchServiceTest extends TestCase
      */
     protected $fixture;
 
-    public function setUp()
+    public function setUp(): void
     {
         $requestStack = $this->getMockBuilder(RequestStack::class)->getMock();
-        $client = $this->getMockBuilder(Client::class)->getMock();
-        $queryService = new QueryService('a', 'b', 'c', 'd');
+        $client = $this->getMockBuilder(Client::class)->disableOriginalConstructor()->getMock();
+        $queryService = new QueryService('a', 'b', (array) 'c', (array) 'd');
         $paginator = new Paginator(new EventDispatcher());
         $snippetConfig = [
             'page_number' => 43,
