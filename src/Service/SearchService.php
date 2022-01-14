@@ -167,8 +167,8 @@ class SearchService implements SearchServiceInterface
     {
         $search = new Search();
 
-        $scope = $this->request->getMasterRequest()->get('scope');
-        $query = $this->request->getMasterRequest()->get('search')['q'] ?? '';
+        $scope = $this->request->getMainRequest()->get('scope');
+        $query = $this->request->getMainRequest()->get('search')['q'] ?? '';
 
         if (!empty($query)) {
             if (false !== strpos($query, ':')) {
@@ -178,13 +178,13 @@ class SearchService implements SearchServiceInterface
             if (!empty($scope)) {
                 $search->setQuery(sprintf('%s:%s', $scope, $query));
             } else {
-                $search->setQuery(sprintf('%s:%s', $this->request->getMasterRequest()->get('search')['searchType'],
+                $search->setQuery(sprintf('%s:%s', $this->request->getMainRequest()->get('search')['searchType'],
                     $query));
             }
         }
         $search
             ->setRows((int) $this->configuration['results_per_page'])
-            ->setCurrentPage((int) $this->request->getMasterRequest()->get('page') ?: 1);
+            ->setCurrentPage((int) $this->request->getMainRequest()->get('page') ?: 1);
 
         return $search;
     }
