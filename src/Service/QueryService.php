@@ -11,20 +11,8 @@ use Solarium\QueryType\Select\Query\Query;
  */
 class QueryService implements QueryServiceInterface
 {
-    private string $defaultQuery;
-
-    private string $defaultSort;
-
-    private array $facets;
-
-    private array $hidden;
-
-    public function __construct(string $defaultQuery, string $defaultSort, array $hidden, array $facets)
+    public function __construct(private string $defaultQuery, private string $defaultSort, private array $hidden, private array $facets)
     {
-        $this->defaultQuery = $defaultQuery;
-        $this->defaultSort = $defaultSort;
-        $this->hidden = $hidden;
-        $this->facets = $facets;
     }
 
     public function addFacets(FacetSet $facetSet, ?array $activeFacets): array
@@ -64,7 +52,7 @@ class QueryService implements QueryServiceInterface
         return $filterQueries;
     }
 
-    public function addQueryFilters(Query $select, ?array $activeFacets)
+    public function addQueryFilters(Query $select, ?array $activeFacets): void
     {
         $facetSet = $select->getFacetSet();
         $filters = $this->addFacets($facetSet, $activeFacets);
@@ -73,11 +61,11 @@ class QueryService implements QueryServiceInterface
         }
     }
 
-    public function addQuerySort(Query $select, ?string $sort = '', ?string $order = '')
+    public function addQuerySort(Query $select, ?string $sort = '', ?string $order = ''): void
     {
         $sortArray = !empty($sort) && !empty($order) ? $this->getSorting($sort.' '.$order) : $this->getSorting();
 
-        if (is_array($sortArray) && [] != $sortArray) {
+        if ([] !== $sortArray) {
             $select->addSort($sortArray[0], $sortArray[1]);
         }
     }

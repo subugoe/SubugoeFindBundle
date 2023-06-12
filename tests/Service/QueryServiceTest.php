@@ -17,7 +17,7 @@ class QueryServiceTest extends TestCase
         $this->fixture = new QueryService('a', 'b', (array) 'c', (array) 'd');
     }
 
-    public function sortingProvider(): array
+    public static function sortingProvider(): array
     {
         return [
             [
@@ -29,9 +29,7 @@ class QueryServiceTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider sortingProvider
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('sortingProvider')]
     public function testSortingReturnsAnArrayWithTheCorrectNumberOfElements($sortString, $count): void
     {
         $this->assertCount($count, $this->fixture->getSorting($sortString));

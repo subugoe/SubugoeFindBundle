@@ -4,22 +4,17 @@ declare(strict_types=1);
 
 namespace Subugoe\FindBundle\Controller;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Solarium\Client;
 use Solarium\QueryType\Select\Query\FilterQuery;
 use Subugoe\FindBundle\Service\QueryService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 class FeedController extends AbstractController
 {
-    private Client $client;
-    private QueryService $queryService;
-
-    public function __construct(Client $client, QueryService $queryService)
+    public function __construct(private Client $client, private QueryService $queryService)
     {
-        $this->client = $client;
-        $this->queryService = $queryService;
     }
 
     /**
@@ -49,7 +44,7 @@ class FeedController extends AbstractController
             $select->addFilterQuery($categoryFilter);
         }
 
-        if (is_array($sort) && [] !== $sort) {
+        if ([] !== $sort) {
             $select->addSort($sort[0], $sort[1]);
         }
 

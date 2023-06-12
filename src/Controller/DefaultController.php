@@ -15,15 +15,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class DefaultController extends AbstractController
 {
-    private Client $client;
-    private QueryService $queryService;
-    private SearchService $searchService;
-
-    public function __construct(Client $client, QueryService $queryService, SearchService $searchService)
+    public function __construct(private Client $client, private QueryService $queryService, private SearchService $searchService)
     {
-        $this->client = $client;
-        $this->queryService = $queryService;
-        $this->searchService = $searchService;
     }
 
     /**

@@ -15,22 +15,10 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class SearchService implements SearchServiceInterface
 {
-    private Client $client;
     private array $configuration;
-    private PaginatorInterface $paginator;
-    private QueryService $queryService;
-    private RequestStack $request;
 
-    public function __construct(
-        RequestStack $request,
-        Client $client,
-        QueryService $queryService,
-        PaginatorInterface $paginator
-    ) {
-        $this->request = $request;
-        $this->client = $client;
-        $this->queryService = $queryService;
-        $this->paginator = $paginator;
+    public function __construct(private RequestStack $request, private Client $client, private QueryService $queryService, private PaginatorInterface $paginator)
+    {
     }
 
     public function addHighlighting(Query $select, string $field): Query
@@ -41,7 +29,7 @@ class SearchService implements SearchServiceInterface
     }
 
     /**
-     * @param array $fields a list of fields, i.e. ['id', 'title']
+     * @param array|null $fields a list of fields, i.e. ['id', 'title']
      */
     public function getDocumentBy(string $field, string $value, ?array $fields = []): DocumentInterface
     {
@@ -109,9 +97,13 @@ class SearchService implements SearchServiceInterface
                 $highlighting = $resultSet->getHighlighting();
 
                 foreach ($resultSet as $key => $document) {
-                    $doc = $highlighting->getResult($document->id);
-                    $snippets = $doc->getField($this->configuration['snippet']['field']);
-                    $highlights[$docId][$key] = ['pageNumber' => $document->ft_page_number, 'snippets' => $snippets];
+                    if (null !== $highlighting) {
+                        $doc = $highlighting->getResult($document->id);
+                        if (null !== $doc) {
+                            $snippets = $doc->getField($this->configuration['snippet']['field']);
+                            $highlights[$docId][$key] = ['pageNumber' => $document->ft_page_number, 'snippets' => $snippets];
+                        }
+                    }
                 }
             }
         }
@@ -167,24 +159,28 @@ class SearchService implements SearchServiceInterface
     {
         $search = new Search();
 
-        $scope = $this->request->getMainRequest()->get('scope');
-        $query = $this->request->getMainRequest()->get('search')['q'] ?? '';
+        $mainRequest = $this->request->getMainRequest();
 
-        if (!empty($query)) {
-            if (false !== strpos($query, ':')) {
-                $query = addcslashes($query, ':');
-            }
+        if (null !== $mainRequest) {
+            $scope = $mainRequest->get('scope');
+            $query = $mainRequest->get('search')['q'] ?? '';
 
-            if (!empty($scope)) {
-                $search->setQuery(sprintf('%s:%s', $scope, $query));
-            } else {
-                $search->setQuery(sprintf('%s:%s', $this->request->getMainRequest()->get('search')['searchType'],
-                    $query));
+            if (!empty($query)) {
+                if (str_contains($query, ':')) {
+                    $query = addcslashes($query, ':');
+                }
+
+                if (!empty($scope)) {
+                    $search->setQuery(sprintf('%s:%s', $scope, $query));
+                } else {
+                    $search->setQuery(sprintf('%s:%s', $mainRequest->get('search')['searchType'],
+                        $query));
+                }
             }
+            $search
+                ->setRows((int) $this->configuration['results_per_page'])
+                ->setCurrentPage((int) $mainRequest->get('page') ?: 1);
         }
-        $search
-            ->setRows((int) $this->configuration['results_per_page'])
-            ->setCurrentPage((int) $this->request->getMainRequest()->get('page') ?: 1);
 
         return $search;
     }
@@ -220,7 +216,7 @@ class SearchService implements SearchServiceInterface
 
             $query .= ')';
         } else {
-            if (false !== strpos($searchTerms, ':')) {
+            if (str_contains($searchTerms, ':')) {
                 $searchTerms = addcslashes($searchTerms, ':');
             }
 

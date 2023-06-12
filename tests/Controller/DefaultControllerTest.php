@@ -6,7 +6,8 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class DefaultControllerTest extends WebTestCase
 {
-    public function testIndex()
+    #[\PHPUnit\Framework\Attributes\DoesNotPerformAssertions]
+    public function testIndex(): void
     {
         $this->markTestSkipped();
     }
